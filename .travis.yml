@@ -44,7 +44,7 @@ script:
 >>>>>>> Update travis deploy key
 deploy:
   provider: lambda
-  function_name: travis-test
+  function_name: SWoT
   region: us-east-1
   role: arn:aws:iam::578324725290:role/service-role/lambdarole
   runtime: nodejs6.10
