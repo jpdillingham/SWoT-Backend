@@ -1,0 +1,23 @@
+{
+  "name": "swot-backend",
+  "version": "1.0.0",
+  "description": "Repository for the AWS Lambda backend for SWoT.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jpdillingham/SWoT-Backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jpdillingham/SWoT-Backend/issues"
+  },
+  "homepage": "https://github.com/jpdillingham/SWoT-Backend#readme",
+  "dependencies": {
+    "express": "^4.16.2",
+    "serverless-http": "^1.5.3"
+  }
+}
