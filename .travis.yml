@@ -10,7 +10,7 @@ deploy:
   provider: lambda
   function_name: travis-test
   region: us-east-1
-  role: arn:aws:iam::0123456789012:role/lambda_basic_execution
+  role: arn:aws:iam::578324725290:role/service-role/lambdarole
   runtime: nodejs6.10
   handler_name: handler
   access_key_id: AKIAISVZZFCRHSNRRK7Q
