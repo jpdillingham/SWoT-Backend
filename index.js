@@ -27,6 +27,24 @@ exports.handler = (event, context, callback) => {
             ]
         },
         { 
+            id: 'c4a10b9d-d5de-434e-bac4-c3a4ff014f83',
+            name: 'Overhead Press',
+            type: 'Weightlifting',
+            url: 'https://www.bodybuilding.com/exercises/standing-military-press',
+            metrics: [
+                {
+                    name: 'Weight',
+                    uom: 'Lbs',
+                },
+                {
+                    name: 'Sets',
+                },
+                {
+                    name: 'Reps',
+                }
+            ]
+        },
+        { 
             id: '29d53257-5eca-4083-9019-81dc62425801',
             name: 'Squat',
             type: 'Weightlifting',
