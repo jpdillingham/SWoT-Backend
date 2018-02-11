@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 matrix:
   include:
     - language: node_js
@@ -27,6 +28,16 @@ matrix:
           repo: jpdillingham/SWoT
           branch: master
 =======
+=======
+language: node_js
+node_js:
+  - "stable"
+cache:
+  directories:
+  - node_modules
+script:
+  - npm test
+>>>>>>> Add build config to travis.yml
 deploy:
   provider: lambda
   function_name: "travis-test"
