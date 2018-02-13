@@ -1,19 +1,20 @@
 {
-  "name": "aws-serverless-express-example",
-  "version": "2.1.1",
-  "description": "Example application for running a Node Express app on AWS Lambda using Amazon API Gateway.",
-  "main": "lambda.js",
+  "name": "swot-backend",
+  "version": "1.0.0",
+  "description": "Repository for the AWS Lambda backend for SWoT.",
+  "main": "index.js",
   "scripts": {
-    "start": "node app.local.js",
     "test": "echo \"Error: no test specified\""
   },
-  "license": "Apache-2.0",
-  "dependencies": {
-    "aws-serverless-express": "^3.0.0",
-    "body-parser": "^1.17.1",
-    "compression": "^1.6.2",
-    "cors": "^2.8.3",
-    "express": "^4.15.2",
-    "pug": "^2.0.0-rc.1"
-  }
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jpdillingham/SWoT-Backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jpdillingham/SWoT-Backend/issues"
+  },
+  "homepage": "https://github.com/jpdillingham/SWoT-Backend#readme",
+  "dependencies": {}
 }
