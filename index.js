@@ -176,10 +176,10 @@ exports.handler = (event, context, callback) => {
         }
     ]
 
-    let path = event.path.split('/');    
+    let path = event.path.toUpperCase().split('/');    
     
     switch(path[1]) {
-        case '/exercises':
+        case 'EXERCISES':
             switch(event.httpMethod) {
                 case 'GET':
                     response.statusCode = 200
@@ -206,7 +206,7 @@ exports.handler = (event, context, callback) => {
                     response.statusCode = 405 // method not available
                     callback(null, response)
             }
-        case '/routines':
+        case 'ROUTINES':
             switch(event.httpMethod) {
                 case 'GET':
                     response.statusCode = 200
