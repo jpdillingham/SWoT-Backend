@@ -2,7 +2,8 @@ exports.handler = (event, context, callback) => {
     var response = {
         "headers": {
             "Access-Control-Allow-Origin" : "*",
-            "Access-Control-Allow-Credentials" : true 
+            "Access-Control-Allow-Credentials" : true,
+            "AssetID" : undefined,
         },
         "isBase64Encoded": false
     };
@@ -174,9 +175,10 @@ exports.handler = (event, context, callback) => {
             ]
         }
     ]
+
+    let path = event.path.split('/');    
     
-    
-    switch(event.path) {
+    switch(path[1]) {
         case '/exercises':
             switch(event.httpMethod) {
                 case 'GET':
@@ -198,6 +200,7 @@ exports.handler = (event, context, callback) => {
                 case 'DELETE':
                     response.statusCode = 204
                     response.body = event.body
+                    response.headers.AssetID = path[2]
                     callback(null, response);
                 default:
                     response.statusCode = 405 // method not available
@@ -224,6 +227,7 @@ exports.handler = (event, context, callback) => {
                 case 'DELETE':
                     response.statusCode = 204
                     response.body = event.body
+                    response.headers.AssetID = path[2]
                     callback(null, response);
                 default:
                     response.statusCode = 405
