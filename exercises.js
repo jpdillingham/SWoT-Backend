@@ -1,17 +1,15 @@
 var data = require('data')
 
-exports.handle = (event, response) => {
-    switch(event.httpMethod) {
+exports.handle = (request, response) => {
+    switch(request.httpMethod) {
         case 'GET':
-            response.statusCode = 200
-            response.body = JSON.stringify(data.exercises)
-            return response;
+            return get(request, response);
         case 'POST':
             response.statusCode = 201
-            response.body = event.body
+            response.body = request.body
             return response;
         case 'PUT':
-            var item = JSON.parse(event.body);
+            var item = JSON.parse(request.body);
             var resp = Object.assign({}, item);
             resp.name = resp.name + '!'
             
@@ -27,4 +25,10 @@ exports.handle = (event, response) => {
             response.statusCode = 405 // method not available
             return response;
     }
+}
+
+const get = (request, response) => {
+    response.statusCode = 200
+    response.body = JSON.stringify(data.exercises)
+    return response;
 }
