@@ -1,8 +1,6 @@
 var data = require('data')
 
 exports.handle = (request, response) => {
-    let path = request.path.toUpperCase().split('/');    
-
     switch(request.httpMethod) {
         case 'GET':
             return get(request, response);
@@ -41,6 +39,8 @@ const put = (request, response) => {
 }
 
 const _delete = (request, response) => {
+    let path = request.path.toUpperCase().split('/');    
+    
     response.statusCode = 204
     response.body = request.body
     response.headers.AssetID = path[2]
