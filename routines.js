@@ -24,12 +24,12 @@ const get = (request, response) => {
 
 const post = (request, response) => { 
     response.statusCode = 201
-    response.body = event.body
+    response.body = request.body
     return response;
 }
 
 const put = (request, response) => {
-    var item = JSON.parse(event.body);
+    var item = JSON.parse(request.body);
     var resp = Object.assign({}, item);
     resp.name = resp.name + '!'
     
@@ -42,7 +42,7 @@ const _delete = (request, response) => {
     let path = request.path.toUpperCase().split('/');    
     
     response.statusCode = 204
-    response.body = event.body
+    response.body = request.body
     response.headers.AssetID = path[2]
     return response;
 }
