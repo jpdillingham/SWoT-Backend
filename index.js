@@ -29,7 +29,31 @@ app.put('/routines', (req, res) => {
     res.json(body)
 })
 
-app.delete('/routines/:id', (req, rese) => {
+app.delete('/routines/:id', (req, res) => {
+    res.status(204);
+    res.json(req.body);
+    req.header('AssetID', req.params.id);
+})
+
+app.get('/exercises', (req, res) => {
+    res.status(200);
+    res.json(data.exercises);
+})
+
+app.post('/exercises', (req, res) => {
+    res.status(201);
+    res.json(req.body);
+})
+
+app.put('/exercises', (req, res) => {
+    var body = req.body;
+    body.name = body.name + "!"
+
+    res.status(200);
+    res.json(body)
+})
+
+app.delete('/exercises/:id', (req, res) => {
     res.status(204);
     res.json(req.body);
     req.header('AssetID', req.params.id);
