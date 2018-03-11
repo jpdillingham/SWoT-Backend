@@ -1,7 +1,9 @@
 const awsServerlessExpress = require('aws-serverless-express');   
 const express = require('express');  
+const cors = require('cors');
 
 const app = express();
+app.use(cors);
 
 var data = require('data')
 
