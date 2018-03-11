@@ -1,26 +1,36 @@
+const awsServerlessExpress = require('aws-serverless-express');   
+const express = require('express');  
+
+const app = express();
+
 var data = require('data')
-var exercises = require('exercises')
-var routines = require('routines')
 
-exports.handler = (event, context, callback) => {
-    var response = {
-        "headers": {
-            "Access-Control-Allow-Origin" : "*",
-            "Access-Control-Allow-Credentials" : true,
-            "AssetID" : undefined,
-        },
-        "isBase64Encoded": false
-    };
+app.get('/routines', (req, res) => {  
+    res.status(200);
+    res.json(data.routines);
+});
 
-    let path = event.path.toUpperCase().split('/');    
-    
-    switch(path[1]) {
-        case 'EXERCISES':
-            callback(null, exercises.handle(event, response));
-        case 'ROUTINES':
-            callback(null, routines.handle(event, response));
-        default:
-            response.statusCode = 404
-            callback(null, response)
-    }
-};
+app.post('/routines', (req, res) => {
+    res.status(201);
+    res.json(req.body);
+})
+
+app.put('/routines', (req, res) => {
+    var body = req.body;
+    body.name = body.name + "!"
+
+    res.status(200);
+    res.json(body)
+})
+
+app.delete('/routines/:id', (req, rese) => {
+    res.status(204);
+    res.json(req.body);
+    req.header('AssetID', req.params.id);
+})
+
+app.listen(3000, () => console.log('Listening on port 3000.')); // ignored by lambda
+
+const server = awsServerlessExpress.createServer(app);
+
+exports.handler = (event, context) => awsServerlessExpress.proxy(server, event, context);  
