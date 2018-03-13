@@ -1,4 +1,5 @@
 const awsServerlessExpress = require('aws-serverless-express');  
+const awsServerlessExpressMiddleware = require('aws-serverless-express/middleware');
 const AWS = require('aws-sdk');
 const express = require('express');  
 const cors = require('cors');
@@ -9,6 +10,7 @@ const dynamoDB = new AWS.DynamoDB.DocumentClient({apiVersion: '2012-08-10'});
 
 const app = express();
 
+app.use(awsServerlessExpressMiddleware.eventContext());
 app.use(cors());
 app.use(bodyParser.json());  
 app.use(bodyParser.urlencoded({ extended: true }));
