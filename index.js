@@ -1,7 +1,11 @@
-const awsServerlessExpress = require('aws-serverless-express');   
+const awsServerlessExpress = require('aws-serverless-express');  
+const AWS = require('aws-sdk');
 const express = require('express');  
 const cors = require('cors');
 const bodyParser = require('body-parser'); 
+
+AWS.config.update({ region: 'us-east-1' });
+const dynamoDB = new AWS.DynamoDB.DocumentClient({apiVersion: '2012-08-10'});
 
 const app = express();
 
@@ -36,8 +40,23 @@ app.delete('/routines/:id', (req, res) => {
 })
 
 app.get('/exercises', (req, res) => {
-    res.status(200);
-    res.json(data.exercises);
+    let params = {
+        TableName: 'SWoT-Exercises',
+        Key: {
+            'email': 'test35@whatnet.us',
+        }
+    };
+
+    dynamoDB.get(params, (err, data) => {
+        if (err) {
+            res.status(500);
+            res.json(err);
+        } 
+        else {
+            res.status(200);
+            res.json(data.Item.data);
+        }
+    });
 })
 
 app.post('/exercises', (req, res) => {
