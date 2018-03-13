@@ -42,10 +42,11 @@ app.delete('/routines/:id', (req, res) => {
 })
 
 app.get('/exercises', (req, res) => {
+    let email = req.apiGateway.event.requestContext.authorizer.claims.email;
     let params = {
         TableName: 'SWoT-Exercises',
         Key: {
-            'email': 'test35@whatnet.us',
+            'email': email,
         }
     };
 
