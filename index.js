@@ -59,6 +59,9 @@ app.delete('/routines/:id', (req, res) => {
 
 app.get('/exercises', (req, res) => {
     let accountId = req.apiGateway.event.requestContext.accountId;
+
+    console.log(accountId);
+
     let params = {
         TableName: 'SWoT',
         Key: {
@@ -68,12 +71,14 @@ app.get('/exercises', (req, res) => {
 
     dynamoDB.get(params, (err, data) => {
         if (err) {
+            console.log(err);
             res.status(500);
             res.json(err);
         } 
         else {
+            console.log(data);
             res.status(200);
-            res.json(data.Item.data.exercises);
+            res.json(data.Item.exercises);
         }
     });
 })
