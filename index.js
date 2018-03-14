@@ -39,6 +39,7 @@ app.get('/routines', (req, res) => {
 });
 
 app.post('/routines', (req, res) => {
+    // todo: validate input
     let params = {
         TableName: 'SWoT',
         Key: { 
@@ -48,6 +49,7 @@ app.post('/routines', (req, res) => {
         ExpressionAttributeNames: { '#routines' : 'routines' },
         ExpressionAttributeValues: { ':routine': req.body }        
     }
+
     dynamoDB.update(params, (err, data) => {
         if (err) {
             res.status(500);
