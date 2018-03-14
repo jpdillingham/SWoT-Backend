@@ -22,7 +22,8 @@ app.get('/routines', (req, res) => {
         TableName: 'SWoT',
         Key: {
             'accountId': req.apiGateway.event.requestContext.accountId,
-        }
+        },
+        ProjectionExpression: 'routines',
     };
 
     dynamoDB.get(params, (err, data) => {
@@ -61,15 +62,18 @@ app.get('/exercises', (req, res) => {
         TableName: 'SWoT',
         Key: {
             'accountId': req.apiGateway.event.requestContext.accountId,
-        }
+        },
+        ProjectionExpression: 'exercises',
     };
 
     dynamoDB.get(params, (err, data) => {
         if (err) {
+            console.log(err);
             res.status(500);
             res.json(err);
         } 
         else {
+            console.log(data);
             res.status(200);
             res.json(data.Item.exercises);
         }
