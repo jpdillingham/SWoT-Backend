@@ -39,8 +39,25 @@ app.get('/routines', (req, res) => {
 });
 
 app.post('/routines', (req, res) => {
-    res.status(201);
-    res.json(req.body);
+    let params = {
+        TableName: 'SWoT',
+        Key: { 
+            accountId: req.apiGateway.event.requestContext.accountId 
+        },
+        UpdateExpression: 'ADD #routines :routine',
+        ExpressionAttributeNames: { '#routines' : 'routines' },
+        ExpressionAttributeValues: { ':routine': req.body }        
+    }
+    dynamoDB.update(params, (err, data) => {
+        if (err) {
+            res.status(500);
+            res.json(err);
+        }
+        else {
+            res.status(201);
+            res.json(req.body);
+        }
+    })
 })
 
 app.put('/routines', (req, res) => {
