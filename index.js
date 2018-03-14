@@ -18,8 +18,24 @@ app.use(bodyParser.urlencoded({ extended: true }));
 var data = require('data')
 
 app.get('/routines', (req, res) => {  
-    res.status(200);
-    res.json(data.routines);
+    let email = req.apiGateway.event.requestContext.authorizer.claims.email;
+    let params = {
+        TableName: 'SWoT-Routines',
+        Key: {
+            'email': email,
+        }
+    };
+
+    dynamoDB.get(params, (err, data) => {
+        if (err) {
+            res.status(500);
+            res.json(err);
+        } 
+        else {
+            res.status(200);
+            res.json(data.Item.data);
+        }
+    });
 });
 
 app.post('/routines', (req, res) => {
