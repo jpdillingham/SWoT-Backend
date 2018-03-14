@@ -58,11 +58,11 @@ app.delete('/routines/:id', (req, res) => {
 })
 
 app.get('/exercises', (req, res) => {
-    let email = req.apiGateway.event.requestContext.authorizer.claims.email;
+    let accountId = req.apiGateway.event.requestContext.accountId;
     let params = {
-        TableName: 'SWoT-Exercises',
+        TableName: 'SWoT',
         Key: {
-            'email': email,
+            'accountId': accountId,
         }
     };
 
@@ -73,7 +73,7 @@ app.get('/exercises', (req, res) => {
         } 
         else {
             res.status(200);
-            res.json(data.Item.data);
+            res.json(data.Item.data.exercises);
         }
     });
 })
