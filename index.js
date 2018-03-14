@@ -18,8 +18,24 @@ app.use(bodyParser.urlencoded({ extended: true }));
 var data = require('data')
 
 app.get('/routines', (req, res) => {  
-    res.status(200);
-    res.json(data.routines);
+    let params = {
+        TableName: 'SWoT',
+        Key: {
+            'accountId': req.apiGateway.event.requestContext.accountId,
+        },
+        ProjectionExpression: 'routines',
+    };
+
+    dynamoDB.get(params, (err, data) => {
+        if (err) {
+            res.status(500);
+            res.json(err);
+        } 
+        else {
+            res.status(200);
+            res.json(data.Item.routines);
+        }
+    });
 });
 
 app.post('/routines', (req, res) => {
@@ -42,12 +58,12 @@ app.delete('/routines/:id', (req, res) => {
 })
 
 app.get('/exercises', (req, res) => {
-    let email = req.apiGateway.event.requestContext.authorizer.claims.email;
     let params = {
-        TableName: 'SWoT-Exercises',
+        TableName: 'SWoT',
         Key: {
-            'email': email,
-        }
+            'accountId': req.apiGateway.event.requestContext.accountId,
+        },
+        ProjectionExpression: 'exercises',
     };
 
     dynamoDB.get(params, (err, data) => {
@@ -57,7 +73,7 @@ app.get('/exercises', (req, res) => {
         } 
         else {
             res.status(200);
-            res.json(data.Item.data);
+            res.json(data.Item.exercises);
         }
     });
 })
