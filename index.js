@@ -45,7 +45,7 @@ app.post('/routines', (req, res) => {
         Key: { 
             accountId: req.apiGateway.event.requestContext.accountId 
         },
-        UpdateExpression: 'ADD #routines :routine',
+        UpdateExpression: 'SET #routines = list_append(#routines, :routine)',
         ExpressionAttributeNames: { '#routines' : 'routines' },
         ExpressionAttributeValues: { ':routine': req.body }        
     }
