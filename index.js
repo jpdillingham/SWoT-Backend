@@ -92,10 +92,49 @@ app.put('/routines', (req, res) => {
 })
 
 app.delete('/routines/:id', (req, res) => {
-    res.status(204);
-    res.json(req.body);
-    req.header('AssetID', req.params.id);
+    let params = {
+        TableName: 'SWoT',
+        Key: {
+            'accountId': req.apiGateway.event.requestContext.accountId,
+        },
+        ProjectionExpression: 'routines',
+    };
+
+    dynamoDB.get(params, (err, data) => {
+        if (err) {
+            res.status(500);
+            res.json(err);
+        } 
+    }).promise().then((data) => {
+        let routines = data.Item.routines;
+        routines = routines.filter(routine => routine.id != req.params.id);
+    
+        let params = {
+            TableName: 'SWoT',
+            Key: { 
+                accountId: req.apiGateway.event.requestContext.accountId 
+            },
+            UpdateExpression: 'SET #routines = :routines',
+            ExpressionAttributeNames: { '#routines' : 'routines' },
+            ExpressionAttributeValues: { ':routines': routines }        
+        }
+    
+        dynamoDB.update(params, (err, data) => {
+            if (err) {
+                throw err;
+            }
+            else {
+                res.status(204);
+                res.json(req.body);
+                req.header('AssetID', req.params.id);
+            }
+        });
+    }).catch((err) => {
+        res.status(500);
+        res.json(err);
+    });
 })
+
 
 app.get('/exercises', (req, res) => {
     let params = {
