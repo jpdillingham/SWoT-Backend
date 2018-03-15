@@ -39,12 +39,12 @@ app.post('/routines', (req, res) => {
     let key = getKey(req);
     let routine = req.body;
 
-    getRoutines(key)
+    database.getRoutines(key)
     .then((data) => {
         let routines = data.Item.routines;
         routines.push(routine);
         
-        setRoutines(key, routines).then((data) => {
+        database.setRoutines(key, routines).then((data) => {
             res.status(201);
             res.json(routine);
         });
@@ -67,13 +67,13 @@ app.delete('/routines/:id', (req, res) => {
     let key = getKey(req);
     let id = req.params.id;
 
-    getRoutines(key)
+    database.getRoutines(key)
     .then((data) => {
         let routines = data.Item.routines;
         let routine = routines.find(routine => routine.id === id);
         routines = routines.filter(routine => routine.id !== id);
         
-        setRoutines(key, routines).then((data) => {
+        database.setRoutines(key, routines).then((data) => {
             res.status(204);
             res.json(routine);
             req.header('AssetID','tesasers');
