@@ -17,11 +17,16 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 var data = require('data')
 
+const getKey = (req) => {
+    return req.apiGateway.event.requestContext.authorizer.claims.sub;
+}
+
 app.get('/routines', (req, res) => {  
+    console.log(req.apiGateway.event.requestContext)
     let params = {
         TableName: 'SWoT',
         Key: {
-            'accountId': req.apiGateway.event.requestContext.accountId,
+            'accountId': getKey(req),
         },
         ProjectionExpression: 'routines',
     };
@@ -66,7 +71,7 @@ const setRoutines = (key, routines) => {
 
 app.post('/routines', (req, res) => {
     // todo: validate input
-    let key = req.apiGateway.event.requestContext.accountId;
+    let key = getKey(req);
     let routine = req.body;
 
     getRoutines(key)
@@ -94,7 +99,7 @@ app.put('/routines', (req, res) => {
 })
 
 app.delete('/routines/:id', (req, res) => {
-    let key = req.apiGateway.event.requestContext.accountId;
+    let key = getKey(req);
     let id = req.params.id;
 
     getRoutines(key)
@@ -119,7 +124,7 @@ app.get('/exercises', (req, res) => {
     let params = {
         TableName: 'SWoT',
         Key: {
-            'accountId': req.apiGateway.event.requestContext.accountId,
+            'accountId': getKey(req),
         },
         ProjectionExpression: 'exercises',
     };
