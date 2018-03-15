@@ -38,44 +38,44 @@ app.get('/routines', (req, res) => {
     });
 });
 
-app.post('/routines', (req, res) => {
-    // todo: validate input
-
+const getRoutines = (key) => {
     let params = {
         TableName: 'SWoT',
         Key: {
-            'accountId': req.apiGateway.event.requestContext.accountId,
+            'accountId': key,
         },
         ProjectionExpression: 'routines',
     };
+    
+    return dynamoDB.get(params).promise();
+}
 
-    dynamoDB.get(params, (err, data) => {
-        if (err) {
-            res.status(500);
-            res.json(err);
-        } 
-    }).promise().then((data) => {
+const setRoutines = (key, routines) => {
+    let params = {
+        TableName: 'SWoT',
+        Key: { 
+            accountId: key
+        },
+        UpdateExpression: 'SET #routines = :routines',
+        ExpressionAttributeNames: { '#routines' : 'routines' },
+        ExpressionAttributeValues: { ':routines': routines }        
+    } 
+    
+    return dynamoDB.update(params).promise();
+}
+
+app.post('/routines', (req, res) => {
+    // todo: validate input
+    let key = req.apiGateway.event.requestContext.accountId;
+    let routine = req.body;
+
+    getRoutines(key).then((data) => {
         let routines = data.Item.routines;
-        routines.push(req.body);
-    
-        let params = {
-            TableName: 'SWoT',
-            Key: { 
-                accountId: req.apiGateway.event.requestContext.accountId 
-            },
-            UpdateExpression: 'SET #routines = :routines',
-            ExpressionAttributeNames: { '#routines' : 'routines' },
-            ExpressionAttributeValues: { ':routines': routines }        
-        }
-    
-        dynamoDB.update(params, (err, data) => {
-            if (err) {
-                throw err;
-            }
-            else {
-                res.status(201);
-                res.json(req.body);
-            }
+        routines.push(routine);
+        
+        setRoutines(key, routines).then((data) => {
+            res.status(201);
+            res.json(routine);
         });
     }).catch((err) => {
         res.status(500);
@@ -134,7 +134,6 @@ app.delete('/routines/:id', (req, res) => {
         res.json(err);
     });
 })
-
 
 app.get('/exercises', (req, res) => {
     let params = {
