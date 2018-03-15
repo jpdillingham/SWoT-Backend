@@ -69,7 +69,8 @@ app.post('/routines', (req, res) => {
     let key = req.apiGateway.event.requestContext.accountId;
     let routine = req.body;
 
-    getRoutines(key).then((data) => {
+    getRoutines(key)
+    .then((data) => {
         let routines = data.Item.routines;
         routines.push(routine);
         
@@ -77,7 +78,8 @@ app.post('/routines', (req, res) => {
             res.status(201);
             res.json(routine);
         });
-    }).catch((err) => {
+    })
+    .catch((err) => {
         res.status(500);
         res.json(err);
     });
@@ -92,44 +94,22 @@ app.put('/routines', (req, res) => {
 })
 
 app.delete('/routines/:id', (req, res) => {
-    let params = {
-        TableName: 'SWoT',
-        Key: {
-            'accountId': req.apiGateway.event.requestContext.accountId,
-        },
-        ProjectionExpression: 'routines',
-    };
+    let key = req.apiGateway.event.requestContext.accountId;
+    let id = req.params.id;
 
-    dynamoDB.get(params, (err, data) => {
-        if (err) {
-            res.status(500);
-            res.json(err);
-        } 
-    }).promise().then((data) => {
+    getRoutines(key)
+    .then((data) => {
         let routines = data.Item.routines;
-        routines = routines.filter(routine => routine.id != req.params.id);
-    
-        let params = {
-            TableName: 'SWoT',
-            Key: { 
-                accountId: req.apiGateway.event.requestContext.accountId 
-            },
-            UpdateExpression: 'SET #routines = :routines',
-            ExpressionAttributeNames: { '#routines' : 'routines' },
-            ExpressionAttributeValues: { ':routines': routines }        
-        }
-    
-        dynamoDB.update(params, (err, data) => {
-            if (err) {
-                throw err;
-            }
-            else {
-                res.status(204);
-                res.json(req.body);
-                req.header('AssetID', req.params.id);
-            }
+        let routine = routines.find(routine => routine.id === id);
+        routines = routines.filter(routine => routine.id !== id);
+        
+        setRoutines(key, routines).then((data) => {
+            res.status(204);
+            res.json(routine);
+            req.header('AssetID','tesasers');
         });
-    }).catch((err) => {
+    })
+    .catch((err) => {
         res.status(500);
         res.json(err);
     });
