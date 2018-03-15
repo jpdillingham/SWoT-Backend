@@ -41,7 +41,7 @@ app.get('/routines', (req, res) => {
 app.post('/routines', (req, res) => {
     // todo: validate input
 
-    let getparams = {
+    let params = {
         TableName: 'SWoT',
         Key: {
             'accountId': req.apiGateway.event.requestContext.accountId,
@@ -49,23 +49,14 @@ app.post('/routines', (req, res) => {
         ProjectionExpression: 'routines',
     };
 
-    var existingRoutines = [];
-
-    dynamoDB.get(getparams, (err, data) => {
+    dynamoDB.get(params, (err, data) => {
         if (err) {
             res.status(500);
             res.json(err);
-            console.log(err);
         } 
-        else {
-            existingRoutines = data.Item.routines;
-            console.log(data.Item.routines);
-        }
     }).promise().then((data) => {
         let routines = data.Item.routines;
         routines.push(req.body);
-        
-        console.log("new", routines);
     
         let params = {
             TableName: 'SWoT',
@@ -79,16 +70,17 @@ app.post('/routines', (req, res) => {
     
         dynamoDB.update(params, (err, data) => {
             if (err) {
-                res.status(500);
-                res.json(err);
-                console.log(err);
+                throw err;
             }
             else {
                 res.status(201);
                 res.json(req.body);
             }
-        })
-    })
+        });
+    }).catch((err) => {
+        res.status(500);
+        res.json(err);
+    });
 })
 
 app.put('/routines', (req, res) => {
