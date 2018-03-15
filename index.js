@@ -40,25 +40,54 @@ app.get('/routines', (req, res) => {
 
 app.post('/routines', (req, res) => {
     // todo: validate input
-    let params = {
-        TableName: 'SWoT',
-        Key: { 
-            accountId: req.apiGateway.event.requestContext.accountId 
-        },
-        UpdateExpression: 'SET #routines = list_append(#routines, :routine)',
-        ExpressionAttributeNames: { '#routines' : 'routines' },
-        ExpressionAttributeValues: { ':routine': req.body }        
-    }
 
-    dynamoDB.update(params, (err, data) => {
+    let getparams = {
+        TableName: 'SWoT',
+        Key: {
+            'accountId': req.apiGateway.event.requestContext.accountId,
+        },
+        ProjectionExpression: 'routines',
+    };
+
+    var existingRoutines = [];
+
+    dynamoDB.get(getparams, (err, data) => {
         if (err) {
             res.status(500);
             res.json(err);
-        }
+            console.log(err);
+        } 
         else {
-            res.status(201);
-            res.json(req.body);
+            existingRoutines = data.Item.routines;
+            console.log(data.Item.routines);
         }
+    }).promise().then((data) => {
+        let routines = data.Item.routines;
+        routines.push(req.body);
+        
+        console.log("new", routines);
+    
+        let params = {
+            TableName: 'SWoT',
+            Key: { 
+                accountId: req.apiGateway.event.requestContext.accountId 
+            },
+            UpdateExpression: 'SET #routines = :routines',
+            ExpressionAttributeNames: { '#routines' : 'routines' },
+            ExpressionAttributeValues: { ':routines': routines }        
+        }
+    
+        dynamoDB.update(params, (err, data) => {
+            if (err) {
+                res.status(500);
+                res.json(err);
+                console.log(err);
+            }
+            else {
+                res.status(201);
+                res.json(req.body);
+            }
+        })
     })
 })
 
