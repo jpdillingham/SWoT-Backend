@@ -16,58 +16,23 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 var data = require('data')
+var database = require('database')
 
 const getKey = (req) => {
     return req.apiGateway.event.requestContext.authorizer.claims.sub;
 }
 
-app.get('/routines', (req, res) => {  
-    console.log(req.apiGateway.event.requestContext)
-    let params = {
-        TableName: 'SWoT',
-        Key: {
-            'accountId': getKey(req),
-        },
-        ProjectionExpression: 'routines',
-    };
-
-    dynamoDB.get(params, (err, data) => {
-        if (err) {
-            res.status(500);
-            res.json(err);
-        } 
-        else {
-            res.status(200);
-            res.json(data.Item.routines);
-        }
+app.get('/routines', (req, res) => { 
+    database.getRoutines(getKey(req))
+    .then((data) => {
+        res.status(200);
+        res.json(data.Item.routines);
+    })
+    .catch((err) => {
+        res.status(500);
+        res.json(err);
     });
 });
-
-const getRoutines = (key) => {
-    let params = {
-        TableName: 'SWoT',
-        Key: {
-            'accountId': key,
-        },
-        ProjectionExpression: 'routines',
-    };
-    
-    return dynamoDB.get(params).promise();
-}
-
-const setRoutines = (key, routines) => {
-    let params = {
-        TableName: 'SWoT',
-        Key: { 
-            accountId: key
-        },
-        UpdateExpression: 'SET #routines = :routines',
-        ExpressionAttributeNames: { '#routines' : 'routines' },
-        ExpressionAttributeValues: { ':routines': routines }        
-    } 
-    
-    return dynamoDB.update(params).promise();
-}
 
 app.post('/routines', (req, res) => {
     // todo: validate input
