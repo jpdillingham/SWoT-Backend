@@ -28,3 +28,29 @@ exports.setRoutines = (key, routines) => {
     
     return dynamoDB.update(params).promise();
 }
+
+exports.getExercises = (key) => {
+    let params = {
+        TableName: 'SWoT',
+        Key: {
+            user: key,
+        },
+        ProjectionExpression: 'exercises',
+    };
+    
+    return dynamoDB.get(params).promise();
+}
+
+exports.setExercises = (key, exercises) => {
+    let params = {
+        TableName: 'SWoT',
+        Key: { 
+            user: key
+        },
+        UpdateExpression: 'SET #exercises = :exercises',
+        ExpressionAttributeNames: { '#exercises' : 'exercises' },
+        ExpressionAttributeValues: { ':exercises': exercises }        
+    } 
+    
+    return dynamoDB.update(params).promise();
+}
