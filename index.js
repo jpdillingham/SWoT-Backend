@@ -106,23 +106,16 @@ app.delete('/routines/:id', (req, res) => {
 })
 
 app.get('/exercises', (req, res) => {
-    let params = {
-        TableName: 'SWoT',
-        Key: {
-            'accountId': getKey(req),
-        },
-        ProjectionExpression: 'exercises',
-    };
+    let key = getKey(req);
 
-    dynamoDB.get(params, (err, data) => {
-        if (err) {
-            res.status(500);
-            res.json(err);
-        } 
-        else {
-            res.status(200);
-            res.json(data.Item.exercises);
-        }
+    database.getExercises(key)
+    .then((data) => {
+        res.status(200);
+        res.json(data.Item.exercises);
+    })
+    .catch((err) => {
+        res.status(500);
+        res.json(err);
     });
 })
 
