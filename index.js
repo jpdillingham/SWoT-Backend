@@ -120,8 +120,24 @@ app.get('/exercises', (req, res) => {
 })
 
 app.post('/exercises', (req, res) => {
-    res.status(201);
-    res.json(req.body);
+    // todo: validate input
+    let key = getKey(req);
+    let exercise = req.body;
+
+    database.getExercisess(key)
+    .then((data) => {
+        let routines = data.Item.exercises;
+        routines.push(exercise);
+        
+        database.setExercises(key, exercise).then((data) => {
+            res.status(201);
+            res.json(exercise);
+        });
+    })
+    .catch((err) => {
+        res.status(500);
+        res.json(err);
+    });
 })
 
 app.put('/exercises', (req, res) => {
