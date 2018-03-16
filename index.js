@@ -72,7 +72,7 @@ app.put('/routines/:id', (req, res) => {
         routines[index] = routine;
         
         database.setRoutines(key, routines).then((data) => {
-            res.status(204);
+            res.status(200);
             res.json(routine);
             req.header('AssetID','tesasers');
         });
