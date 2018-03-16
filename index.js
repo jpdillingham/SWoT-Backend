@@ -25,7 +25,7 @@ const getKey = (req) => {
 app.get('/routines', (req, res) => { 
     let key = getKey(req);
 
-    database.getRoutines(key)
+    database.get('routines', key)
     .then((data) => {
         res.status(200);
         res.json(data.Item.routines);
@@ -41,7 +41,7 @@ app.post('/routines', (req, res) => {
     let key = getKey(req);
     let routine = req.body;
 
-    database.getRoutines(key)
+    database.get('routines', key)
     .then((data) => {
         let routines = data.Item.routines;
         routines.push(routine);
@@ -62,7 +62,7 @@ app.put('/routines/:id', (req, res) => {
     let id = req.params.id;
     let routine = req.body;
 
-    database.getRoutines(key)
+    database.get('routines', key)
     .then((data) => {
         let routines = data.Item.routines;
         let foundRoutine = routines.find(routine => routine.id === id);
@@ -87,7 +87,7 @@ app.delete('/routines/:id', (req, res) => {
     let key = getKey(req);
     let id = req.params.id;
 
-    database.getRoutines(key)
+    database.get('routines', key)
     .then((data) => {
         let routines = data.Item.routines;
         let routine = routines.find(routine => routine.id === id);
@@ -108,7 +108,7 @@ app.delete('/routines/:id', (req, res) => {
 app.get('/exercises', (req, res) => {
     let key = getKey(req);
 
-    database.getExercises(key)
+    database.get('exercises', key)
     .then((data) => {
         res.status(200);
         res.json(data.Item.exercises);
@@ -124,7 +124,7 @@ app.post('/exercises', (req, res) => {
     let key = getKey(req);
     let exercise = req.body;
 
-    database.getExercises(key)
+    database.get('exercises', key)
     .then((data) => {
         let exercises = data.Item.exercises;
         exercises.push(exercise);
@@ -147,7 +147,7 @@ app.put('/exercises/:id', (req, res) => {
     let id = req.params.id;
     let exercise = req.body;
 
-    database.getExercises(key)
+    database.get('exercises', key)
     .then((data) => {
         let exercises = data.Item.exercises;
         let foundExercise = exercises.find(exercise => exercise.id === id);
@@ -172,7 +172,7 @@ app.delete('/exercises/:id', (req, res) => {
     let key = getKey(req);
     let id = req.params.id;
 
-    database.getExercises(key)
+    database.get('exercises', key)
     .then((data) => {
         let exercises = data.Item.exercises;
         let exercise = exercises.find(exercise => exercise.id === id);
