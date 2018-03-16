@@ -124,12 +124,14 @@ app.post('/exercises', (req, res) => {
     let key = getKey(req);
     let exercise = req.body;
 
-    database.getExercisess(key)
+    database.getExercises(key)
     .then((data) => {
-        let routines = data.Item.exercises;
-        routines.push(exercise);
+        let exercises = data.Item.exercises;
+        exercises.push(exercise);
         
-        database.setExercises(key, exercise).then((data) => {
+        console.log(exercises);
+        
+        database.setExercises(key, exercises).then((data) => {
             res.status(201);
             res.json(exercise);
         });
