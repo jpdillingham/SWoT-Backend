@@ -140,12 +140,30 @@ app.post('/exercises', (req, res) => {
     });
 })
 
-app.put('/exercises', (req, res) => {
-    var body = req.body;
-    body.name = body.name + "!"
+app.put('/exercises/:id', (req, res) => {
+    let key = getKey(req);
+    let id = req.params.id;
+    let exercise = req.body;
 
-    res.status(200);
-    res.json(body)
+    database.getExercises(key)
+    .then((data) => {
+        let exercises = data.Item.exercises;
+        let foundExercise = exercises.find(exercise => exercise.id === id);
+
+        let index = exercises.indexOf(foundExercise);
+
+        exercises[index] = exercise;
+        
+        database.setExercises(key, exercises).then((data) => {
+            res.status(200);
+            res.json(exercise);
+            req.header('AssetID','tesasers');
+        });
+    })
+    .catch((err) => {
+        res.status(500);
+        res.json(err);
+    });
 })
 
 app.delete('/exercises/:id', (req, res) => {
