@@ -57,12 +57,30 @@ app.post('/routines', (req, res) => {
     });
 })
 
-app.put('/routines', (req, res) => {
-    var body = req.body;
-    body.name = body.name + "!"
+app.put('/routines:id', (req, res) => {
+    let key = getKey(req);
+    let id = req.params.id;
+    let routine = req.body;
 
-    res.status(200);
-    res.json(body)
+    database.getRoutines(key)
+    .then((data) => {
+        let routines = data.Item.routines;
+        let foundRoutine = routines.find(routine => routine.id === id);
+
+        let index = routines.indexOf(foundRoutine);
+
+        routines[index] = routine;
+        
+        database.setRoutines(key, routines).then((data) => {
+            res.status(204);
+            res.json(routine);
+            req.header('AssetID','tesasers');
+        });
+    })
+    .catch((err) => {
+        res.status(500);
+        res.json(err);
+    });
 })
 
 app.delete('/routines/:id', (req, res) => {
