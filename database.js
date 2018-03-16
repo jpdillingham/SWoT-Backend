@@ -3,6 +3,17 @@ const AWS = require('aws-sdk');
 AWS.config.update({ region: 'us-east-1' });
 const dynamoDB = new AWS.DynamoDB.DocumentClient({apiVersion: '2012-08-10'});
 
+const removeEmptyStringElements = (obj) => {
+  for (var prop in obj) {
+    if (typeof obj[prop] === 'object') {// dive deeper in
+      removeEmptyStringElements(obj[prop]);
+    } else if(obj[prop] === '') {// delete elements that are empty strings
+      delete obj[prop];
+    }
+  }
+  return obj;
+}
+
 exports.getRoutines = (key) => {
     let params = {
         TableName: 'SWoT',
@@ -42,6 +53,8 @@ exports.getExercises = (key) => {
 }
 
 exports.setExercises = (key, exercises) => {
+    removeEmptyStringElements(exercises);
+    
     let params = {
         TableName: 'SWoT',
         Key: { 
