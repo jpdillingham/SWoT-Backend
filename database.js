@@ -17,6 +17,20 @@ exports.get = (property, key) => {
     return dynamoDB.get(params).promise();
 }
 
+exports.set = (property, key, value) => {
+    let params = {
+        TableName: TABLE_NAME,
+        Key: { 
+            user: key
+        },
+        UpdateExpression: 'SET #property = :value',
+        ExpressionAttributeNames: { '#property' : property },
+        ExpressionAttributeValues: { ':value': value }        
+    } 
+    
+    return dynamoDB.update(params).promise();  
+}
+
 exports.setRoutines = (key, routines) => {
     let params = {
         TableName: 'SWoT',
