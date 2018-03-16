@@ -167,9 +167,25 @@ app.put('/exercises/:id', (req, res) => {
 })
 
 app.delete('/exercises/:id', (req, res) => {
-    res.status(204);
-    res.json(req.body);
-    req.header('AssetID', req.params.id);
+    let key = getKey(req);
+    let id = req.params.id;
+
+    database.getExercises(key)
+    .then((data) => {
+        let exercises = data.Item.exercises;
+        let exercise = exercises.find(exercise => exercise.id === id);
+        exercises = exercises.filter(exercise => exercise.id !== id);
+        
+        database.setExercises(key, exercises).then((data) => {
+            res.status(204);
+            res.json(exercise);
+            req.header('AssetID','tesasers');
+        });
+    })
+    .catch((err) => {
+        res.status(500);
+        res.json(err);
+    });
 })
 
 app.listen(3000, () => console.log('Listening on port 3000.')); // ignored by lambda
