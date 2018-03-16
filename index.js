@@ -57,7 +57,7 @@ app.post('/routines', (req, res) => {
     });
 })
 
-app.put('/routines:id', (req, res) => {
+app.put('/routines/:id', (req, res) => {
     let key = getKey(req);
     let id = req.params.id;
     let routine = req.body;
