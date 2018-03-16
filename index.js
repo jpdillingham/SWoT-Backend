@@ -23,7 +23,9 @@ const getKey = (req) => {
 }
 
 app.get('/routines', (req, res) => { 
-    database.getRoutines(getKey(req))
+    let key = getKey(req);
+
+    database.getRoutines(key)
     .then((data) => {
         res.status(200);
         res.json(data.Item.routines);
