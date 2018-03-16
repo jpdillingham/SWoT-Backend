@@ -17,18 +17,6 @@ exports.get = (property, key) => {
     return dynamoDB.get(params).promise();
 }
 
-exports.getRoutines = (key) => {
-    let params = {
-        TableName: 'SWoT',
-        Key: {
-            user: key,
-        },
-        ProjectionExpression: 'routines',
-    };
-    
-    return dynamoDB.get(params).promise();
-}
-
 exports.setRoutines = (key, routines) => {
     let params = {
         TableName: 'SWoT',
@@ -41,18 +29,6 @@ exports.setRoutines = (key, routines) => {
     } 
     
     return dynamoDB.update(params).promise();
-}
-
-exports.getExercises = (key) => {
-    let params = {
-        TableName: 'SWoT',
-        Key: {
-            user: key,
-        },
-        ProjectionExpression: 'exercises',
-    };
-    
-    return dynamoDB.get(params).promise();
 }
 
 exports.setExercises = (key, exercises) => {
