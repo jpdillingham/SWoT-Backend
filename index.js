@@ -46,7 +46,7 @@ app.post('/routines', (req, res) => {
         let routines = data.Item.routines;
         routines.push(routine);
         
-        database.setRoutines(key, routines).then((data) => {
+        database.set('routines', key, routines).then((data) => {
             res.status(201);
             res.json(routine);
         });
@@ -93,7 +93,7 @@ app.delete('/routines/:id', (req, res) => {
         let routine = routines.find(routine => routine.id === id);
         routines = routines.filter(routine => routine.id !== id);
         
-        database.setRoutines(key, routines).then((data) => {
+        database.set('routines', key, routines).then((data) => {
             res.status(204);
             res.json(routine);
             req.header('AssetID','tesasers');
@@ -131,7 +131,7 @@ app.post('/exercises', (req, res) => {
         
         console.log(exercises);
         
-        database.setExercises(key, exercises).then((data) => {
+        database.set('exercises', key, exercises).then((data) => {
             res.status(201);
             res.json(exercise);
         });
@@ -156,7 +156,7 @@ app.put('/exercises/:id', (req, res) => {
 
         exercises[index] = exercise;
         
-        database.setExercises(key, exercises).then((data) => {
+        database.set('exercises', key, exercises).then((data) => {
             res.status(200);
             res.json(exercise);
             req.header('AssetID','tesasers');
@@ -178,7 +178,7 @@ app.delete('/exercises/:id', (req, res) => {
         let exercise = exercises.find(exercise => exercise.id === id);
         exercises = exercises.filter(exercise => exercise.id !== id);
         
-        database.setExercises(key, exercises).then((data) => {
+        database.set('exercises', key, exercises).then((data) => {
             res.status(204);
             res.json(exercise);
             req.header('AssetID','tesasers');
