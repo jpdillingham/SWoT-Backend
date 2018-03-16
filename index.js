@@ -16,70 +16,37 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 var data = require('data')
+var database = require('database')
 
 const getKey = (req) => {
     return req.apiGateway.event.requestContext.authorizer.claims.sub;
 }
 
-app.get('/routines', (req, res) => {  
-    console.log(req.apiGateway.event.requestContext)
-    let params = {
-        TableName: 'SWoT',
-        Key: {
-            'accountId': getKey(req),
-        },
-        ProjectionExpression: 'routines',
-    };
+app.get('/routines', (req, res) => { 
+    let key = getKey(req);
 
-    dynamoDB.get(params, (err, data) => {
-        if (err) {
-            res.status(500);
-            res.json(err);
-        } 
-        else {
-            res.status(200);
-            res.json(data.Item.routines);
-        }
+    database.getRoutines(key)
+    .then((data) => {
+        res.status(200);
+        res.json(data.Item.routines);
+    })
+    .catch((err) => {
+        res.status(500);
+        res.json(err);
     });
 });
-
-const getRoutines = (key) => {
-    let params = {
-        TableName: 'SWoT',
-        Key: {
-            'accountId': key,
-        },
-        ProjectionExpression: 'routines',
-    };
-    
-    return dynamoDB.get(params).promise();
-}
-
-const setRoutines = (key, routines) => {
-    let params = {
-        TableName: 'SWoT',
-        Key: { 
-            accountId: key
-        },
-        UpdateExpression: 'SET #routines = :routines',
-        ExpressionAttributeNames: { '#routines' : 'routines' },
-        ExpressionAttributeValues: { ':routines': routines }        
-    } 
-    
-    return dynamoDB.update(params).promise();
-}
 
 app.post('/routines', (req, res) => {
     // todo: validate input
     let key = getKey(req);
     let routine = req.body;
 
-    getRoutines(key)
+    database.getRoutines(key)
     .then((data) => {
         let routines = data.Item.routines;
         routines.push(routine);
         
-        setRoutines(key, routines).then((data) => {
+        database.setRoutines(key, routines).then((data) => {
             res.status(201);
             res.json(routine);
         });
@@ -90,25 +57,43 @@ app.post('/routines', (req, res) => {
     });
 })
 
-app.put('/routines', (req, res) => {
-    var body = req.body;
-    body.name = body.name + "!"
+app.put('/routines/:id', (req, res) => {
+    let key = getKey(req);
+    let id = req.params.id;
+    let routine = req.body;
 
-    res.status(200);
-    res.json(body)
+    database.getRoutines(key)
+    .then((data) => {
+        let routines = data.Item.routines;
+        let foundRoutine = routines.find(routine => routine.id === id);
+
+        let index = routines.indexOf(foundRoutine);
+
+        routines[index] = routine;
+        
+        database.setRoutines(key, routines).then((data) => {
+            res.status(200);
+            res.json(routine);
+            req.header('AssetID','tesasers');
+        });
+    })
+    .catch((err) => {
+        res.status(500);
+        res.json(err);
+    });
 })
 
 app.delete('/routines/:id', (req, res) => {
     let key = getKey(req);
     let id = req.params.id;
 
-    getRoutines(key)
+    database.getRoutines(key)
     .then((data) => {
         let routines = data.Item.routines;
         let routine = routines.find(routine => routine.id === id);
         routines = routines.filter(routine => routine.id !== id);
         
-        setRoutines(key, routines).then((data) => {
+        database.setRoutines(key, routines).then((data) => {
             res.status(204);
             res.json(routine);
             req.header('AssetID','tesasers');
@@ -121,43 +106,88 @@ app.delete('/routines/:id', (req, res) => {
 })
 
 app.get('/exercises', (req, res) => {
-    let params = {
-        TableName: 'SWoT',
-        Key: {
-            'accountId': getKey(req),
-        },
-        ProjectionExpression: 'exercises',
-    };
+    let key = getKey(req);
 
-    dynamoDB.get(params, (err, data) => {
-        if (err) {
-            res.status(500);
-            res.json(err);
-        } 
-        else {
-            res.status(200);
-            res.json(data.Item.exercises);
-        }
+    database.getExercises(key)
+    .then((data) => {
+        res.status(200);
+        res.json(data.Item.exercises);
+    })
+    .catch((err) => {
+        res.status(500);
+        res.json(err);
     });
 })
 
 app.post('/exercises', (req, res) => {
-    res.status(201);
-    res.json(req.body);
+    // todo: validate input
+    let key = getKey(req);
+    let exercise = req.body;
+
+    database.getExercises(key)
+    .then((data) => {
+        let exercises = data.Item.exercises;
+        exercises.push(exercise);
+        
+        console.log(exercises);
+        
+        database.setExercises(key, exercises).then((data) => {
+            res.status(201);
+            res.json(exercise);
+        });
+    })
+    .catch((err) => {
+        res.status(500);
+        res.json(err);
+    });
 })
 
-app.put('/exercises', (req, res) => {
-    var body = req.body;
-    body.name = body.name + "!"
+app.put('/exercises/:id', (req, res) => {
+    let key = getKey(req);
+    let id = req.params.id;
+    let exercise = req.body;
 
-    res.status(200);
-    res.json(body)
+    database.getExercises(key)
+    .then((data) => {
+        let exercises = data.Item.exercises;
+        let foundExercise = exercises.find(exercise => exercise.id === id);
+
+        let index = exercises.indexOf(foundExercise);
+
+        exercises[index] = exercise;
+        
+        database.setExercises(key, exercises).then((data) => {
+            res.status(200);
+            res.json(exercise);
+            req.header('AssetID','tesasers');
+        });
+    })
+    .catch((err) => {
+        res.status(500);
+        res.json(err);
+    });
 })
 
 app.delete('/exercises/:id', (req, res) => {
-    res.status(204);
-    res.json(req.body);
-    req.header('AssetID', req.params.id);
+    let key = getKey(req);
+    let id = req.params.id;
+
+    database.getExercises(key)
+    .then((data) => {
+        let exercises = data.Item.exercises;
+        let exercise = exercises.find(exercise => exercise.id === id);
+        exercises = exercises.filter(exercise => exercise.id !== id);
+        
+        database.setExercises(key, exercises).then((data) => {
+            res.status(204);
+            res.json(exercise);
+            req.header('AssetID','tesasers');
+        });
+    })
+    .catch((err) => {
+        res.status(500);
+        res.json(err);
+    });
 })
 
 app.listen(3000, () => console.log('Listening on port 3000.')); // ignored by lambda
