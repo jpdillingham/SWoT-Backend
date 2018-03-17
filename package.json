@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\"",
+    "zip": "tools\\zip.py",
     "deploy": "aws lambda update-function-code help"
   },
   "repository": {
