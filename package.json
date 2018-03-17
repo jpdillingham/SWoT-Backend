@@ -4,7 +4,8 @@
   "description": "Repository for the AWS Lambda backend for SWoT.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\""
+    "test": "echo \"Error: no test specified\"",
+    "deploy": "aws lambda update-function-code help"
   },
   "repository": {
     "type": "git",
