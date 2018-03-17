@@ -30,31 +30,3 @@ exports.set = (property, key, value) => {
     
     return dynamoDB.update(params).promise();  
 }
-
-exports.setRoutines = (key, routines) => {
-    let params = {
-        TableName: 'SWoT',
-        Key: { 
-            user: key
-        },
-        UpdateExpression: 'SET #routines = :routines',
-        ExpressionAttributeNames: { '#routines' : 'routines' },
-        ExpressionAttributeValues: { ':routines': routines }        
-    } 
-    
-    return dynamoDB.update(params).promise();
-}
-
-exports.setExercises = (key, exercises) => {
-    let params = {
-        TableName: 'SWoT',
-        Key: { 
-            user: key
-        },
-        UpdateExpression: 'SET #exercises = :exercises',
-        ExpressionAttributeNames: { '#exercises' : 'exercises' },
-        ExpressionAttributeValues: { ':exercises': exercises }        
-    } 
-    
-    return dynamoDB.update(params).promise();
-}
