@@ -1,56 +1,32 @@
 const AWS = require('aws-sdk');
 
+const TABLE_NAME = 'SWoT';
+
 AWS.config.update({ region: 'us-east-1' });
 const dynamoDB = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10', convertEmptyValues: true });
 
-exports.getRoutines = (key) => {
+exports.get = (property, key) => {
     let params = {
-        TableName: 'SWoT',
+        TableName: TABLE_NAME,
         Key: {
             user: key,
         },
-        ProjectionExpression: 'routines',
+        ProjectionExpression: property,
     };
     
     return dynamoDB.get(params).promise();
 }
 
-exports.setRoutines = (key, routines) => {
+exports.set = (property, key, value) => {
     let params = {
-        TableName: 'SWoT',
+        TableName: TABLE_NAME,
         Key: { 
             user: key
         },
-        UpdateExpression: 'SET #routines = :routines',
-        ExpressionAttributeNames: { '#routines' : 'routines' },
-        ExpressionAttributeValues: { ':routines': routines }        
+        UpdateExpression: 'SET #property = :value',
+        ExpressionAttributeNames: { '#property' : property },
+        ExpressionAttributeValues: { ':value': value }        
     } 
     
-    return dynamoDB.update(params).promise();
-}
-
-exports.getExercises = (key) => {
-    let params = {
-        TableName: 'SWoT',
-        Key: {
-            user: key,
-        },
-        ProjectionExpression: 'exercises',
-    };
-    
-    return dynamoDB.get(params).promise();
-}
-
-exports.setExercises = (key, exercises) => {
-    let params = {
-        TableName: 'SWoT',
-        Key: { 
-            user: key
-        },
-        UpdateExpression: 'SET #exercises = :exercises',
-        ExpressionAttributeNames: { '#exercises' : 'exercises' },
-        ExpressionAttributeValues: { ':exercises': exercises }        
-    } 
-    
-    return dynamoDB.update(params).promise();
+    return dynamoDB.update(params).promise();  
 }
