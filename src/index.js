@@ -15,8 +15,8 @@ app.use(cors());
 app.use(bodyParser.json());  
 app.use(bodyParser.urlencoded({ extended: true }));
 
-var data = require('data')
-var database = require('database')
+var data = require('./data')
+var database = require('./database')
 
 const getKey = (req) => {
     return req.apiGateway.event.requestContext.authorizer.claims.sub;
