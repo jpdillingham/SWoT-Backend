@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\"",
-    "zip": "tools\\zip.py",
-    "deploy": "aws lambda update-function-code help"
+    "zip": "python tools\\zip.py ./ ./build",
+    "deploy": "aws lambda update-function-code --function-name SWoT --zip-file fileb://build/build.zip"
   },
   "repository": {
     "type": "git",
