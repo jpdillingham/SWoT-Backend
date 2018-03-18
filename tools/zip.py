@@ -6,21 +6,31 @@ import tempfile
 import uuid
 
 if __name__ == '__main__':
-    src = os.path.abspath(sys.argv[1])
-    dest = os.path.abspath(sys.argv[2])
-    print('creating deployable zip from ' + src + '...')
+    srcDir = os.path.abspath(sys.argv[1])
+    outputFile = os.path.abspath(sys.argv[2])
 
-    temp = os.path.join(tempfile.gettempdir(), 'swot-builds', str(uuid.uuid4()))
-    output = os.path.join(dest, 'deploy.zip')
+    tempDir = os.path.join(tempfile.gettempdir(), 'zippy-builds')
+    tempFile = os.path.join(tempDir, str(uuid.uuid4()))
 
-    if os.path.exists(output):
-        print('output file exists.  deleting \'' + output + '\'')
-        os.remove(output)
+    print('creating deployable zip from ' + srcDir + '...')
 
-    print ('creating zip in \'' + temp + '\'')
-    shutil.make_archive(temp, 'zip', src)
+    try:
+        print ('creating zip in \'' + tempDir + '\'...')
+        shutil.make_archive(tempFile, 'zip', srcDir)
 
-    print('copying \'' + temp + '\' to \'' + output + '\'')
-    shutil.move(temp + '.zip', output)
+        if os.path.exists(outputFile):
+            print('output file exists.  deleting \'' + outputFile + '\'')
+            os.remove(outputFile)
 
-    print('zip succeeded.')
+        print('copying \'' + tempFile + '.zip\' to \'' + outputFile + '\'...')
+        shutil.move(tempFile + '.zip', outputFile)
+
+        print('zip succeeded.')
+    except:
+        e = sys.exc_info()[0]
+        print('error: ' + e)
+        print('cleaning up...')
+
+        shutil.rmtree(tempDir)
+
+        print('zip failed.')
