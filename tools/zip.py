@@ -22,7 +22,7 @@ if __name__ == '__main__':
         print ('creating zip in \'' + tempDir + '\'...')
         shutil.make_archive(tempFile, 'zip', srcDir)
 
-        print('copying \'' + tempFile + '\' to \'' + outputFile + '\'...')
+        print('copying \'' + tempFile + '.zip\' to \'' + outputFile + '\'...')
         shutil.move(tempFile + '.zip', outputFile)
 
         print('zip succeeded.')
