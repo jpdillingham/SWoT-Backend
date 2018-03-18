@@ -15,12 +15,12 @@ if __name__ == '__main__':
     print('creating deployable zip from ' + srcDir + '...')
 
     try:
+        print ('creating zip in \'' + tempDir + '\'...')
+        shutil.make_archive(tempFile, 'zip', srcDir)
+
         if os.path.exists(outputFile):
             print('output file exists.  deleting \'' + outputFile + '\'')
             os.remove(outputFile)
-
-        print ('creating zip in \'' + tempDir + '\'...')
-        shutil.make_archive(tempFile, 'zip', srcDir)
 
         print('copying \'' + tempFile + '.zip\' to \'' + outputFile + '\'...')
         shutil.move(tempFile + '.zip', outputFile)
