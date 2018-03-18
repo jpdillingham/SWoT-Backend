@@ -2,12 +2,13 @@
 import os
 import shutil
 import tempfile
+import uuid
 
 if __name__ == '__main__':
-    print('creating deployable zip...')
+    print('creating deployable zip from app directory...')
 
-    temp = os.path.join(tempfile.gettempdir(), 'swot')
-    output = os.path.join('..', 'build', 'build.zip')
+    temp = os.path.join(tempfile.gettempdir(), 'swot-builds', str(uuid.uuid4()))
+    output = os.path.join('..', 'build', 'deploy.zip')
 
     if os.path.exists(output):
         print('output file exists.  deleting \'' + output + '\'')
@@ -19,4 +20,4 @@ if __name__ == '__main__':
     print('copying \'' + temp + '\' to \'' + output + '\'')
     shutil.move(temp + '.zip', output)
 
-    print('build succeeded.')
+    print('zip succeeded.')
