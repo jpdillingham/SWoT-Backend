@@ -159,7 +159,6 @@ app.put('/exercises/:id', (req, res) => {
         database.set('exercises', key, exercises).then((data) => {
             res.status(200);
             res.json(exercise);
-            req.header('AssetID','tesasers');
         });
     })
     .catch((err) => {
@@ -181,7 +180,6 @@ app.delete('/exercises/:id', (req, res) => {
         database.set('exercises', key, exercises).then((data) => {
             res.status(204);
             res.json(exercise);
-            req.header('AssetID','tesasers');
         });
     })
     .catch((err) => {
