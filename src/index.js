@@ -171,16 +171,28 @@ app.delete('/exercises/:id', (req, res) => {
     let key = getKey(req);
     let id = req.params.id;
 
-    database.get('exercises', key)
+    database.get('routines', key)
     .then((data) => {
-        let exercises = data.Item.exercises;
-        let exercise = exercises.find(exercise => exercise.id === id);
-        exercises = exercises.filter(exercise => exercise.id !== id);
+        let routines = data.Item.routines;
         
-        database.set('exercises', key, exercises).then((data) => {
-            res.status(204);
-            res.json(exercise);
+        routines.map((routine) => {
+            routine.exercises = routine.exercises.filter(exercise => exercise.id !== id);
         });
+        
+        database.set('routines', key, routines)
+        .then(() => {
+            database.get('exercises', key)
+            .then((data) => {
+                let exercises = data.Item.exercises;
+                let exercise = exercises.find(exercise => exercise.id === id);
+                exercises = exercises.filter(exercise => exercise.id !== id);
+                
+                database.set('exercises', key, exercises).then((data) => {
+                    res.status(204);
+                    res.json(exercise);
+                });
+            });
+        })
     })
     .catch((err) => {
         res.status(500);
@@ -192,4 +204,4 @@ app.listen(3000, () => console.log('Listening on port 3000.')); // ignored by la
 
 const server = awsServerlessExpress.createServer(app);
 
-exports.handler = (event, context) => awsServerlessExpress.proxy(server, event, context);  
+exports.handler = (event, context) => awsServerlessExpress.proxy(server, event, context);
