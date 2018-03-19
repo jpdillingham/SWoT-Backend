@@ -6,6 +6,8 @@ cache:
   - node_modules
 script:
 - npm test
+before_deploy:
+- rm -rf node_modules/aws-sdk
 deploy:
   provider: lambda
   function_name: SWoT
