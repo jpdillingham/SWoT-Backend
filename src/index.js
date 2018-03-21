@@ -46,10 +46,14 @@ app.post('/routines', (req, res) => {
         let routines = data.Item.routines;
         routines.push(routine);
         
-        database.set('routines', key, routines).then((data) => {
-            res.status(201);
-            res.json(routine);
-        });
+        return routines;
+    })
+    .then((routines) => {
+        database.set('routines', key, routines);
+    })
+    .then(() => {
+        res.status(201);
+        res.json(routine);
     })
     .catch((err) => {
         res.status(500);
