@@ -97,14 +97,17 @@ app.delete('/routines/:id', (req, res) => {
     database.get('routines', key)
     .then((data) => {
         let routines = data.Item.routines;
-        let routine = routines.find(routine => routine.id === id);
         routines = routines.filter(routine => routine.id !== id);
         
-        database.set('routines', key, routines).then((data) => {
-            res.status(204);
-            res.json(routine);
-            req.header('AssetID','tesasers');
-        });
+        console.log('updated', routines);
+        return routines;
+    })
+    .then((routines) => {
+        database.set('routines', key, routines)
+    })
+    .then(() => {
+        res.status(204);
+        res.json();
     })
     .catch((err) => {
         res.status(500);
