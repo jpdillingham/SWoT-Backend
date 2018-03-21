@@ -49,7 +49,7 @@ app.post('/routines', (req, res) => {
         return routines;
     })
     .then((routines) => {
-        database.set('routines', key, routines);
+        return database.set('routines', key, routines);
     })
     .then(() => {
         res.status(201);
@@ -78,7 +78,7 @@ app.put('/routines/:id', (req, res) => {
         return routines;
     })
     .then((routines) => {
-        database.set('routines', key, routines);
+        return database.set('routines', key, routines);
     })
     .then(() => {
         res.status(200);
@@ -103,7 +103,7 @@ app.delete('/routines/:id', (req, res) => {
         return routines;
     })
     .then((routines) => {
-        database.set('routines', key, routines)
+        return database.set('routines', key, routines);
     })
     .then(() => {
         res.status(204);
@@ -142,7 +142,7 @@ app.post('/exercises', (req, res) => {
         return exercises;
     })
     .then((exercises) => {
-        database.set('exercises', key, exercises)
+        return database.set('exercises', key, exercises);
     })
     .then(() => {
         res.status(201);
@@ -171,7 +171,7 @@ app.put('/exercises/:id', (req, res) => {
         return exercises;
     })
     .then((exercises) => {
-        database.set('exercises', key, exercises)
+        return database.set('exercises', key, exercises);
     })
     .then(() => {
         res.status(200);
@@ -212,7 +212,7 @@ app.delete('/exercises/:id', (req, res) => {
         return exercises;
     })
     .then((exercises) => {
-        database.set('exercises', key, exercises)
+        return database.set('exercises', key, exercises);
     })
     .then((data) => {
         res.status(204);
