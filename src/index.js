@@ -46,10 +46,14 @@ app.post('/routines', (req, res) => {
         let routines = data.Item.routines;
         routines.push(routine);
         
-        database.set('routines', key, routines).then((data) => {
-            res.status(201);
-            res.json(routine);
-        });
+        return routines;
+    })
+    .then((routines) => {
+        return database.set('routines', key, routines);
+    })
+    .then(() => {
+        res.status(201);
+        res.json(routine);
     })
     .catch((err) => {
         res.status(500);
@@ -71,11 +75,14 @@ app.put('/routines/:id', (req, res) => {
 
         routines[index] = routine;
         
-        database.set('routines', key, routines).then((data) => {
-            res.status(200);
-            res.json(routine);
-            req.header('AssetID','tesasers');
-        });
+        return routines;
+    })
+    .then((routines) => {
+        return database.set('routines', key, routines);
+    })
+    .then(() => {
+        res.status(200);
+        res.json(routine);
     })
     .catch((err) => {
         res.status(500);
@@ -90,14 +97,17 @@ app.delete('/routines/:id', (req, res) => {
     database.get('routines', key)
     .then((data) => {
         let routines = data.Item.routines;
-        let routine = routines.find(routine => routine.id === id);
         routines = routines.filter(routine => routine.id !== id);
         
-        database.set('routines', key, routines).then((data) => {
-            res.status(204);
-            res.json(routine);
-            req.header('AssetID','tesasers');
-        });
+        console.log('updated', routines);
+        return routines;
+    })
+    .then((routines) => {
+        return database.set('routines', key, routines);
+    })
+    .then(() => {
+        res.status(204);
+        res.json();
     })
     .catch((err) => {
         res.status(500);
@@ -129,12 +139,14 @@ app.post('/exercises', (req, res) => {
         let exercises = data.Item.exercises;
         exercises.push(exercise);
         
-        console.log(exercises);
-        
-        database.set('exercises', key, exercises).then((data) => {
-            res.status(201);
-            res.json(exercise);
-        });
+        return exercises;
+    })
+    .then((exercises) => {
+        return database.set('exercises', key, exercises);
+    })
+    .then(() => {
+        res.status(201);
+        res.json(exercise);
     })
     .catch((err) => {
         res.status(500);
@@ -156,10 +168,14 @@ app.put('/exercises/:id', (req, res) => {
 
         exercises[index] = exercise;
         
-        database.set('exercises', key, exercises).then((data) => {
-            res.status(200);
-            res.json(exercise);
-        });
+        return exercises;
+    })
+    .then((exercises) => {
+        return database.set('exercises', key, exercises);
+    })
+    .then(() => {
+        res.status(200);
+        res.json(exercise);
     })
     .catch((err) => {
         res.status(500);
@@ -178,21 +194,29 @@ app.delete('/exercises/:id', (req, res) => {
         routines.map((routine) => {
             routine.exercises = routine.exercises.filter(exercise => exercise.id !== id);
         });
+
+        return routines;
+    })
+    .then((routines) => {
+        return database.set('routines', key, routines);
+    })
+    .then(() => {
+        return database.get('exercises', key);
+    })
+    .then((data) => {
+        console.log(data);
+        let exercises = data.Item.exercises;
+        let exercise = exercises.find(exercise => exercise.id === id);
+        exercises = exercises.filter(exercise => exercise.id !== id);
         
-        database.set('routines', key, routines)
-        .then(() => {
-            database.get('exercises', key)
-            .then((data) => {
-                let exercises = data.Item.exercises;
-                let exercise = exercises.find(exercise => exercise.id === id);
-                exercises = exercises.filter(exercise => exercise.id !== id);
-                
-                database.set('exercises', key, exercises).then((data) => {
-                    res.status(204);
-                    res.json(exercise);
-                });
-            });
-        })
+        return exercises;
+    })
+    .then((exercises) => {
+        return database.set('exercises', key, exercises);
+    })
+    .then((data) => {
+        res.status(204);
+        res.json();
     })
     .catch((err) => {
         res.status(500);
