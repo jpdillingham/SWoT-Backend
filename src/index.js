@@ -75,11 +75,14 @@ app.put('/routines/:id', (req, res) => {
 
         routines[index] = routine;
         
-        database.set('routines', key, routines).then((data) => {
-            res.status(200);
-            res.json(routine);
-            req.header('AssetID','tesasers');
-        });
+        return routines;
+    })
+    .then((routines) => {
+        database.set('routines', key, routines);
+    })
+    .then(() => {
+        res.status(200);
+        res.json(routine);
     })
     .catch((err) => {
         res.status(500);
