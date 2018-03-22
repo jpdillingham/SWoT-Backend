@@ -164,11 +164,7 @@ app.put('/exercises/:id', (req, res) => {
         let routines = data.Item.routines;
 
         routines.map((routine) => {
-            routine.exercises.map((e, index, array) => {
-                if (e.id === id) {
-                    array[index] = exercise;
-                }
-            });
+            routine.exercises.map((e) => e.id === id && Object.assign(e, exercise))
         })
 
         return routines;
