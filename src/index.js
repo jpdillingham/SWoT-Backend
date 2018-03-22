@@ -221,7 +221,6 @@ app.delete('/exercises/:id', (req, res) => {
     .then((data) => {
         console.log(data);
         let exercises = data.Item.exercises;
-        let exercise = exercises.find(exercise => exercise.id === id);
         exercises = exercises.filter(exercise => exercise.id !== id);
         
         return exercises;
