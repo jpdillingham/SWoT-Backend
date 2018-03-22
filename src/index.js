@@ -159,7 +159,26 @@ app.put('/exercises/:id', (req, res) => {
     let id = req.params.id;
     let exercise = req.body;
 
-    database.get('exercises', key)
+    database.get('routines', key)
+    .then((data) => {
+        let routines = data.Item.routines;
+
+        routines.map((routine) => {
+            routine.exercises.map((e, index, array) => {
+                if (e.id === id) {
+                    array[index] = exercise;
+                }
+            });
+        })
+
+        return routines;
+    })
+    .then((routines) => {
+        return database.set('routines', key, routines);
+    })
+    .then(() => {
+        return database.get('exercises', key);
+    })
     .then((data) => {
         let exercises = data.Item.exercises;
         let foundExercise = exercises.find(exercise => exercise.id === id);
