@@ -27,8 +27,9 @@ app.get('/routines', (req, res) => {
 
     database.get('routines', key)
     .then((data) => {
+        let routines = data && data.Item && data.Item.routines ? data.Item.routines : [];
         res.status(200);
-        res.json(data.Item.routines);
+        res.json(routines);
     })
     .catch((err) => {
         res.status(500);
@@ -43,7 +44,7 @@ app.post('/routines', (req, res) => {
 
     database.get('routines', key)
     .then((data) => {
-        let routines = data.Item.routines;
+        let routines = data && data.Item && data.Item.routines ? data.Item.routines : [];
         routines.push(routine);
         
         return routines;
@@ -68,7 +69,7 @@ app.put('/routines/:id', (req, res) => {
 
     database.get('routines', key)
     .then((data) => {
-        let routines = data.Item.routines;
+        let routines = data && data.Item && data.Item.routines ? data.Item.routines : [];
         let foundRoutine = routines.find(routine => routine.id === id);
 
         let index = routines.indexOf(foundRoutine);
@@ -96,7 +97,7 @@ app.delete('/routines/:id', (req, res) => {
 
     database.get('routines', key)
     .then((data) => {
-        let routines = data.Item.routines;
+        let routines = data && data.Item && data.Item.routines ? data.Item.routines : [];
         routines = routines.filter(routine => routine.id !== id);
         
         console.log('updated', routines);
@@ -120,8 +121,9 @@ app.get('/exercises', (req, res) => {
 
     database.get('exercises', key)
     .then((data) => {
+        let exercises = data && data.Item && data.Item.exercises ? data.Item.exercises : [];
         res.status(200);
-        res.json(data.Item.exercises);
+        res.json(exercises);
     })
     .catch((err) => {
         res.status(500);
@@ -136,7 +138,7 @@ app.post('/exercises', (req, res) => {
 
     database.get('exercises', key)
     .then((data) => {
-        let exercises = data.Item.exercises;
+        let exercises = data && data.Item && data.Item.exercises ? data.Item.exercises : [];
         exercises.push(exercise);
         
         return exercises;
@@ -161,7 +163,7 @@ app.put('/exercises/:id', (req, res) => {
 
     database.get('routines', key)
     .then((data) => {
-        let routines = data.Item.routines;
+        let routines = data && data.Item && data.Item.routines ? data.Item.routines : [];
 
         routines.map((routine) => {
             routine.exercises.map((e) => e.id === id && Object.assign(e, exercise))
@@ -176,7 +178,7 @@ app.put('/exercises/:id', (req, res) => {
         return database.get('exercises', key);
     })
     .then((data) => {
-        let exercises = data.Item.exercises;
+        let exercises = data && data.Item && data.Item.exercises ? data.Item.exercises : [];
         let foundExercise = exercises.find(exercise => exercise.id === id);
 
         let index = exercises.indexOf(foundExercise);
@@ -204,7 +206,7 @@ app.delete('/exercises/:id', (req, res) => {
 
     database.get('routines', key)
     .then((data) => {
-        let routines = data.Item.routines;
+        let routines = data && data.Item && data.Item.routines ? data.Item.routines : [];
         
         routines.map((routine) => {
             routine.exercises = routine.exercises.filter(exercise => exercise.id !== id);
@@ -219,8 +221,7 @@ app.delete('/exercises/:id', (req, res) => {
         return database.get('exercises', key);
     })
     .then((data) => {
-        console.log(data);
-        let exercises = data.Item.exercises;
+        let exercises = data && data.Item && data.Item.exercises ? data.Item.exercises : [];
         exercises = exercises.filter(exercise => exercise.id !== id);
         
         return exercises;
