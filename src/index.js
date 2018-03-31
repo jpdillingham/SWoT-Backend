@@ -22,6 +22,100 @@ const getKey = (req) => {
     return req.apiGateway.event.requestContext.authorizer.claims.sub;
 }
 
+app.get('/workouts', (req, res) => { 
+    let key = getKey(req);
+
+    database.get('workouts', key)
+    .then((data) => {
+        let workouts = data && data.Item && data.Item.workouts ? data.Item.workouts : [];
+        res.status(200);
+        res.json(workouts);
+    })
+    .catch((err) => {
+        res.status(500);
+        res.json(err);
+    });
+});
+
+app.post('/workouts', (req, res) => {
+    // todo: validate input
+    let key = getKey(req);
+    let workout = req.body;
+
+    database.get('workouts', key)
+    .then((data) => {
+        let workouts = data && data.Item && data.Item.workouts ? data.Item.workouts : [];
+        workouts.push(workout);
+        
+        return workouts;
+    })
+    .then((workouts) => {
+        return database.set('workouts', key, workouts);
+    })
+    .then(() => {
+        res.status(201);
+        res.json(workout);
+    })
+    .catch((err) => {
+        res.status(500);
+        res.json(err);
+    });
+})
+
+app.put('/workouts/:id', (req, res) => {
+    let key = getKey(req);
+    let id = req.params.id;
+    let workout = req.body;
+
+    database.get('workouts', key)
+    .then((data) => {
+        let workouts = data && data.Item && data.Item.workouts ? data.Item.workouts : [];
+        let foundworkout = workouts.find(workout => workout.id === id);
+
+        let index = workouts.indexOf(foundworkout);
+
+        workouts[index] = workout;
+        
+        return workouts;
+    })
+    .then((workouts) => {
+        return database.set('workouts', key, workouts);
+    })
+    .then(() => {
+        res.status(200);
+        res.json(workout);
+    })
+    .catch((err) => {
+        res.status(500);
+        res.json(err);
+    });
+})
+
+app.delete('/workouts/:id', (req, res) => {
+    let key = getKey(req);
+    let id = req.params.id;
+
+    database.get('workouts', key)
+    .then((data) => {
+        let workouts = data && data.Item && data.Item.workouts ? data.Item.workouts : [];
+        workouts = workouts.filter(workout => workout.id !== id);
+        
+        console.log('updated', workouts);
+        return workouts;
+    })
+    .then((workouts) => {
+        return database.set('workouts', key, workouts);
+    })
+    .then(() => {
+        res.status(204);
+        res.json();
+    })
+    .catch((err) => {
+        res.status(500);
+        res.json(err);
+    });
+})
+
 app.get('/routines', (req, res) => { 
     let key = getKey(req);
 
