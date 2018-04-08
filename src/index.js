@@ -39,7 +39,7 @@ const workoutSort = (predicate) => {
 // sort - /workouts?order=<ASC|DESC>
 app.get('/workouts', (req, res) => { 
     let key = getKey(req);
-    let order = req.query.order.toLowerCase();
+    let order = req.query && req.query.order ? req.query.order.toLowerCase() : undefined;
 
     database.get('workouts', key)
     .then((data) => {
