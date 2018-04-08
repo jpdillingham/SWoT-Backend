@@ -4,6 +4,7 @@
   "description": "Repository for the AWS Lambda backend for SWoT.",
   "main": "index.js",
   "scripts": {
+    "start": "node src/index.js",
     "test": "echo \"Error: no test specified\"",
     "clean-modules": "rm -rf node_modules/aws-sdk && modclean -rvn default:safe,default:caution",
     "zip": "python tools\\zip.py ./ ./build/deploy.zip",
