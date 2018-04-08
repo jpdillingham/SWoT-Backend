@@ -37,6 +37,30 @@ app.get('/workouts', (req, res) => {
     });
 });
 
+app.get('/workouts/:id', (req,res) => {
+    let key = getKey(req);
+    let id = req.params.id;
+
+    database.get('workouts', key)
+    .then(data => {
+        let workouts = data && data.Item && data.Item.workouts ? data.Item.workouts : [];
+        let workout = workouts.find(workout => workout.id === id);
+
+        if (workout === undefined) {
+            res.status(404);
+            res.json();
+        }
+        else {
+            res.status(200);
+            res.json(workout);
+        }
+    })
+    .catch(err => {
+        res.status(500);
+        res.json(err);
+    })
+})
+
 app.post('/workouts', (req, res) => {
     // todo: validate input
     let key = getKey(req);
