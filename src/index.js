@@ -45,12 +45,14 @@ app.get('/workouts', (req, res) => {
     .then((data) => {
         let workouts = data && data.Item && data.Item.workouts ? data.Item.workouts : [];
 
-        if (order === 'asc' || order === 'desc') {
-            workouts = workouts.sort(workoutSort(req.query.order))
-        }
-        else {
-            res.status(400);
-            res.json('Invalid order predicate \' + order + \'; specify ASC or DESC')
+        if (order) {
+            if (order === 'asc' || order === 'desc') {
+                workouts = workouts.sort(workoutSort(order))
+            }
+            else {
+                res.status(400);
+                res.json('Invalid order predicate \'' + order + '\'; specify ASC or DESC')
+            }
         }
 
         res.status(200);
