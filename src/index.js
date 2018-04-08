@@ -22,12 +22,37 @@ const getKey = (req) => {
     return req.apiGateway.event.requestContext.authorizer.claims.sub;
 }
 
+const workoutSort = (predicate) => {
+    return (a, b) => {
+        if (predicate === 'asc') {
+            if (b >= a) return 1;
+            else return -1;
+        }
+        else { 
+            if (a >= b) return 1;
+            else return -1;
+        }
+    }
+}
+
+// pagination - /workouts?limit=N&offset=M
+// sort - /workouts?order=<ASC|DESC>
 app.get('/workouts', (req, res) => { 
     let key = getKey(req);
+    let order = req.query.order.toLowerCase();
 
     database.get('workouts', key)
     .then((data) => {
         let workouts = data && data.Item && data.Item.workouts ? data.Item.workouts : [];
+
+        if (order === 'asc' || order === 'desc') {
+            workouts = workouts.sort(workoutSort(req.query.order))
+        }
+        else {
+            res.status(400);
+            res.json('Invalid order predicate \' + order + \'; specify ASC or DESC')
+        }
+
         res.status(200);
         res.json(workouts);
     })
