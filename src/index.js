@@ -24,13 +24,18 @@ const getKey = (req) => {
 
 const workoutSort = (predicate) => {
     return (a, b) => {
+        a = a.date;
+        b = b.date;
+        
         if (predicate === 'asc') {
-            if (b >= a) return 1;
-            else return -1;
+            if (a > b) return 1;
+            if (a < b) return -1;
+            return 0;
         }
         else { 
-            if (a >= b) return 1;
-            else return -1;
+            if (a > b) return -1;
+            if (a < b) return 1;
+            return 0;
         }
     }
 }
@@ -45,12 +50,14 @@ app.get('/workouts', (req, res) => {
     .then((data) => {
         let workouts = data && data.Item && data.Item.workouts ? data.Item.workouts : [];
 
-        if (order === 'asc' || order === 'desc') {
-            workouts = workouts.sort(workoutSort(req.query.order))
-        }
-        else {
-            res.status(400);
-            res.json('Invalid order predicate \' + order + \'; specify ASC or DESC')
+        if (order) {
+            if (order === 'asc' || order === 'desc') {
+                workouts = workouts.sort(workoutSort(order))
+            }
+            else {
+                res.status(400);
+                res.json('Invalid order predicate \'' + order + '\'; specify ASC or DESC')
+            }
         }
 
         res.status(200);
