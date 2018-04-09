@@ -24,13 +24,18 @@ const getKey = (req) => {
 
 const workoutSort = (predicate) => {
     return (a, b) => {
+        a = a.date;
+        b = b.date;
+        
         if (predicate === 'asc') {
-            if (b >= a) return 1;
-            else return -1;
+            if (a > b) return 1;
+            if (a < b) return -1;
+            return 0;
         }
         else { 
-            if (a >= b) return 1;
-            else return -1;
+            if (a > b) return -1;
+            if (a < b) return 1;
+            return 0;
         }
     }
 }
