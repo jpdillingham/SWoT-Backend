@@ -40,15 +40,30 @@ const workoutSort = (predicate) => {
     }
 }
 
+// status - /workouts?status=<undone|done>
 // pagination - /workouts?limit=N&offset=M
 // sort - /workouts?order=<ASC|DESC>
 app.get('/workouts', (req, res) => { 
     let key = getKey(req);
+    let status = req.query && req.query.status ? req.query.status.toLowerCase() : undefined;
     let order = req.query && req.query.order ? req.query.order.toLowerCase() : undefined;
 
     database.get('workouts', key)
     .then((data) => {
         let workouts = data && data.Item && data.Item.workouts ? data.Item.workouts : [];
+
+        if (status) {
+            if (status === 'done') {
+                workouts = workouts.filter(workout => workout.endTime !== undefined)
+            } 
+            else if (status === 'undone') {
+                workouts = workouts.filter(workout => workout.endTime === undefined)
+            }
+            else {
+                res.status(400);
+                res.status('Invalid status predicate \'' + status + '\'; specify undone or done')
+            }
+        }
 
         if (order) {
             if (order === 'asc' || order === 'desc') {
@@ -95,6 +110,8 @@ app.get('/workouts/:id', (req,res) => {
 
 app.post('/workouts', (req, res) => {
     // todo: validate input
+    // todo: coalesce startTime with current time if undefined
+    // todo: ensure endTime undefined
     let key = getKey(req);
     let workout = req.body;
 
