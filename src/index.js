@@ -53,8 +53,11 @@ app.get('/workouts', (req, res) => {
         let workouts = data && data.Item && data.Item.workouts ? data.Item.workouts : [];
 
         if (status) {
-            if (status === 'done' || status === 'undone') {
-                workouts = workouts.filter(workout => workout.status === status)
+            if (status === 'done') {
+                workouts = workouts.filter(workout => workout.endTime !== undefined)
+            } 
+            else if (status === 'undone') {
+                workouts = workouts.filter(workout => workout.endTime === undefined)
             }
             else {
                 res.status(400);
