@@ -110,10 +110,10 @@ app.get('/workouts/:id', (req,res) => {
 
 app.post('/workouts', (req, res) => {
     // todo: validate input
+    // todo: coalesce startTime with current time if undefined
+    // todo: ensure endTime undefined
     let key = getKey(req);
     let workout = req.body;
-
-    workout.status = 'undone'; // force this in case the client doesn't
 
     database.get('workouts', key)
     .then((data) => {
