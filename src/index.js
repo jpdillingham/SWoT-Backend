@@ -110,6 +110,8 @@ app.post('/workouts', (req, res) => {
     let key = getKey(req);
     let workout = req.body;
 
+    workout.status = 'undone'; // force this in case the client doesn't
+
     database.get('workouts', key)
     .then((data) => {
         let workouts = data && data.Item && data.Item.workouts ? data.Item.workouts : [];
