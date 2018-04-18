@@ -1,13 +1,12 @@
 const AWS = require('aws-sdk');
+const constants = require('./constants');
 
-const TABLE_NAME = 'SWoT';
-
-AWS.config.update({ region: 'us-east-1' });
+AWS.config.update({ region: constants.AWS_REGION });
 const dynamoDB = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10', convertEmptyValues: true });
 
 exports.get = (property, key) => {
     let params = {
-        TableName: TABLE_NAME,
+        TableName: constants.DYNAMO_TABLE,
         Key: {
             user: key,
         },
@@ -19,7 +18,7 @@ exports.get = (property, key) => {
 
 exports.set = (property, key, value) => {
     let params = {
-        TableName: TABLE_NAME,
+        TableName: constants.DYNAMO_TABLE,
         Key: { 
             user: key
         },
