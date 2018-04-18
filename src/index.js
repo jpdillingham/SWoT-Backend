@@ -5,9 +5,6 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser'); 
 
-AWS.config.update({ region: 'us-east-1' });
-const dynamoDB = new AWS.DynamoDB.DocumentClient({apiVersion: '2012-08-10'});
-
 const app = express();
 
 app.use(awsServerlessExpressMiddleware.eventContext());
