@@ -6,7 +6,7 @@ const dynamoDB = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10', con
 
 exports.get = (property, key) => {
     let params = {
-        TableName: TABLE_NAME,
+        TableName: constants.DYNAMO_TABLE,
         Key: {
             user: key,
         },
