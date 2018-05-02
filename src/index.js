@@ -71,6 +71,10 @@ app.get('/workouts', (req, res) => {
             }
         }
 
+        if (limit) {
+            workouts = workouts.slice(offset || 0, limit);
+        }
+
         res.status(200);
         res.json(workouts);
     })
