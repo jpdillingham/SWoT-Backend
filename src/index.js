@@ -43,6 +43,8 @@ app.get('/workouts', (req, res) => {
     let key = getKey(req);
     let status = req.query && req.query.status ? req.query.status.toLowerCase() : undefined;
     let order = req.query && req.query.order ? req.query.order.toLowerCase() : undefined;
+    let limit = req.query && req.query.limit ? req.query.limit : 30;
+    let offset = req.query && req.query.offset ? req.query.offset : 0;
 
     database.get('workouts', key)
     .then((data) => {
@@ -72,7 +74,7 @@ app.get('/workouts', (req, res) => {
         }
 
         if (limit) {
-            workouts = workouts.slice(offset || 0, limit);
+            workouts = workouts.slice(offset, limit);
         }
 
         res.status(200);
