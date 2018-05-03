@@ -23,7 +23,7 @@ const workoutSort = (predicate) => {
         a = a.date;
         b = b.date;
         
-        if (predicate === 'asc') {
+        if (predicate === 'desc') {
             if (a > b) return 1;
             if (a < b) return -1;
             return 0;
