@@ -63,6 +63,8 @@ app.get('/workouts', (req, res) => {
             }
         }
 
+        res.header('X-Total-Count', workouts.length);
+
         if (order) {
             if (order === 'asc' || order === 'desc') {
                 workouts = workouts.sort(workoutSort(order))
