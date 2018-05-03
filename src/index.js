@@ -20,8 +20,8 @@ const getKey = (req) => {
 
 const workoutSort = (predicate) => {
     return (a, b) => {
-        a = a.date;
-        b = b.date;
+        a = a.endTime;
+        b = b.endTime;
         
         if (predicate === 'desc') {
             if (a > b) return 1;
