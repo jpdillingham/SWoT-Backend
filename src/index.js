@@ -8,7 +8,7 @@ const bodyParser = require('body-parser');
 const app = express();
 
 app.use(awsServerlessExpressMiddleware.eventContext());
-app.use(cors());
+app.use(cors({ exposedHeaders: 'X-Total-Count' }));
 app.use(bodyParser.json());  
 app.use(bodyParser.urlencoded({ extended: true }));
 
