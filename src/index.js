@@ -20,10 +20,10 @@ const getKey = (req) => {
 
 const workoutSort = (predicate) => {
     return (a, b) => {
-        a = a.date;
-        b = b.date;
+        a = a.endTime;
+        b = b.endTime;
         
-        if (predicate === 'desc') {
+        if (predicate === 'asc') {
             if (a > b) return 1;
             if (a < b) return -1;
             return 0;
