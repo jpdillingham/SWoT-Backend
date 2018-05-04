@@ -39,10 +39,12 @@ const workoutSort = (predicate) => {
 // status - /workouts?status=<undone|done>
 // pagination - /workouts?limit=N&offset=M
 // sort - /workouts?order=<ASC|DESC>
+// filter by routine - /workouts?routineId=guid
 app.get('/workouts', (req, res) => { 
     let key = getKey(req);
     let status = req.query && req.query.status ? req.query.status.toLowerCase() : undefined;
     let order = req.query && req.query.order ? req.query.order.toLowerCase() : undefined;
+    let routineId = req.query && req.query.routineId ? req.query.routineId.toLowerCase() : undefined;
     let limit = req.query && req.query.limit ? req.query.limit : 30;
     let offset = req.query && req.query.offset ? req.query.offset : 0;
 
@@ -73,6 +75,10 @@ app.get('/workouts', (req, res) => {
                 res.status(400);
                 res.json('Invalid order predicate \'' + order + '\'; specify ASC or DESC')
             }
+        }
+
+        if (routineId) {
+            workouts = workouts.filter(w => w.routine.id === routineId);
         }
 
         if (offset && limit) {
