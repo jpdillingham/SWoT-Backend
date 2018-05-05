@@ -64,6 +64,10 @@ app.get('/workouts', (req, res) => {
                 res.status('Invalid status predicate \'' + status + '\'; specify undone or done')
             }
         }
+        
+        if (routineId) {
+            workouts = workouts.filter(w => w.routine.id === routineId);
+        }
 
         res.header('X-Total-Count', workouts.length);
 
@@ -75,10 +79,6 @@ app.get('/workouts', (req, res) => {
                 res.status(400);
                 res.json('Invalid order predicate \'' + order + '\'; specify ASC or DESC')
             }
-        }
-
-        if (routineId) {
-            workouts = workouts.filter(w => w.routine.id === routineId);
         }
 
         if (offset && limit) {
