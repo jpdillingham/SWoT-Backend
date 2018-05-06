@@ -39,12 +39,17 @@ const workoutSort = (predicate) => {
 // status - /workouts?status=<undone|done>
 // pagination - /workouts?limit=N&offset=M
 // sort - /workouts?order=<ASC|DESC>
+// filter by routine - /workouts?routineId=guid
+// filter by date range = /workouts?fromDate=<unix timestamp>&toDate=<unix timestamp>
 app.get('/workouts', (req, res) => { 
     let key = getKey(req);
     let status = req.query && req.query.status ? req.query.status.toLowerCase() : undefined;
     let order = req.query && req.query.order ? req.query.order.toLowerCase() : undefined;
+    let routineId = req.query && req.query.routineId ? req.query.routineId.toLowerCase() : undefined;
     let limit = req.query && req.query.limit ? req.query.limit : 30;
     let offset = req.query && req.query.offset ? req.query.offset : 0;
+    let fromDate = req.query && req.query.fromDate ? req.query.fromDate : undefined;
+    let toDate = req.query && req.query.toDate ? req.query.toDate : undefined;
 
     database.get('workouts', key)
     .then((data) => {
@@ -61,6 +66,14 @@ app.get('/workouts', (req, res) => {
                 res.status(400);
                 res.status('Invalid status predicate \'' + status + '\'; specify undone or done')
             }
+        }
+
+        if (fromDate && toDate) {
+            workouts = workouts.filter(w => w.endTime >= fromDate && w.endTime <= toDate);
+        }
+        
+        if (routineId) {
+            workouts = workouts.filter(w => w.routine.id === routineId);
         }
 
         res.header('X-Total-Count', workouts.length);

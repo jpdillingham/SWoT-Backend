@@ -7,7 +7,7 @@
     "start": "node src/index.js",
     "test": "echo \"Error: no test specified\"",
     "clean-modules": "rm -rf node_modules/aws-sdk && modclean -rvn default:safe,default:caution",
-    "zip": "python tools\\zip.py ./ ./build/deploy.zip",
+    "zip": "python tools/zip.py ./ ./build/deploy.zip",
     "update-function": "aws lambda update-function-code --function-name SWoT --zip-file fileb://build/deploy.zip",
     "deploy": "npm run clean-modules && npm run zip && npm run update-function"
   },

@@ -28,7 +28,7 @@ if __name__ == '__main__':
         print('zip succeeded.')
     except:
         e = sys.exc_info()[0]
-        print('error: ' + e)
+        print(e)
         print('cleaning up...')
 
         shutil.rmtree(tempDir)
