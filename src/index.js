@@ -42,10 +42,10 @@ app.get('/workouts/history', (req, res) => {
     let toTime = req.query && req.query.toTime ? req.query.toTime : new Date().getTime();
     let routineId = req.query && req.query.routineId ? req.query.routineId.toLowerCase() : undefined;
 
-    database.query(key, fromTime, toTime)
+    database.query(userId, fromTime, toTime)
     .then(data => {
         res.status(200);
-        res.json(data.Items);
+        res.json(data.Items.map(i => i.workout));
     })
     .catch((err) => {
         res.status(500);
