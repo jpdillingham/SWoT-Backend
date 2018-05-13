@@ -6,7 +6,7 @@ const dynamoDB = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10', con
 
 exports.get = (property, key) => {
     let params = {
-        TableName: constants.DYNAMO_TABLE,
+        TableName: constants.PRIMARY_TABLE,
         Key: {
             user: key,
         },
@@ -18,7 +18,7 @@ exports.get = (property, key) => {
 
 exports.set = (property, key, value) => {
     let params = {
-        TableName: constants.DYNAMO_TABLE,
+        TableName: constants.PRIMARY_TABLE,
         Key: { 
             user: key
         },
@@ -28,4 +28,13 @@ exports.set = (property, key, value) => {
     } 
     
     return dynamoDB.update(params).promise();  
+}
+
+exports.scan = (key) => {
+    let params = {
+        TableName: constants.HISTORY_TABLE,
+        Limit: 50,
+    }
+
+    return dynamoDB.scan(params).promise();
 }
