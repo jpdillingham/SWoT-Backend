@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 var database = require('./database')
 
-const getKey = (req) => {
+const getUserId = (req) => {
     return req.apiGateway.event.requestContext.authorizer.claims.sub;
 }
 
@@ -50,7 +50,7 @@ app.get('/history', (req, res) => {
 // filter by routine - /workouts?routineId=guid
 // filter by date range = /workouts?fromDate=<unix timestamp>&toDate=<unix timestamp>
 app.get('/workouts', (req, res) => { 
-    let key = getKey(req);
+    let userId = getUserId(req);
     let status = req.query && req.query.status ? req.query.status.toLowerCase() : undefined;
     let order = req.query && req.query.order ? req.query.order.toLowerCase() : undefined;
     let routineId = req.query && req.query.routineId ? req.query.routineId.toLowerCase() : undefined;
@@ -59,7 +59,7 @@ app.get('/workouts', (req, res) => {
     let fromDate = req.query && req.query.fromDate ? req.query.fromDate : undefined;
     let toDate = req.query && req.query.toDate ? req.query.toDate : undefined;
 
-    database.get('workouts', key)
+    database.get(userId, 'workouts')
     .then((data) => {
         let workouts = data && data.Item && data.Item.workouts ? data.Item.workouts : [];
 
@@ -110,7 +110,7 @@ app.get('/workouts', (req, res) => {
 });
 
 app.get('/workouts/:id', (req,res) => {
-    let key = getKey(req);
+    let userId = getUserId(req);
     let id = req.params.id;
 
     database.get('workouts', key)
@@ -137,10 +137,10 @@ app.post('/workouts', (req, res) => {
     // todo: validate input
     // todo: coalesce startTime with current time if undefined
     // todo: ensure endTime undefined
-    let key = getKey(req);
+    let userId = getUserId(req);
     let workout = req.body;
 
-    database.get('workouts', key)
+    database.getConfig('workouts', key)
     .then((data) => {
         let workouts = data && data.Item && data.Item.workouts ? data.Item.workouts : [];
         workouts.push(workout);
@@ -161,11 +161,11 @@ app.post('/workouts', (req, res) => {
 })
 
 app.put('/workouts/:id', (req, res) => {
-    let key = getKey(req);
+    let userId = getUserId(req);
     let id = req.params.id;
     let workout = req.body;
 
-    database.get('workouts', key)
+    database.getConfig('workouts', key)
     .then((data) => {
         let workouts = data && data.Item && data.Item.workouts ? data.Item.workouts : [];
         let foundworkout = workouts.find(workout => workout.id === id);
@@ -190,10 +190,10 @@ app.put('/workouts/:id', (req, res) => {
 })
 
 app.delete('/workouts/:id', (req, res) => {
-    let key = getKey(req);
+    let userId = getUserId(req);
     let id = req.params.id;
 
-    database.get('workouts', key)
+    database.getConfig('workouts', key)
     .then((data) => {
         let workouts = data && data.Item && data.Item.workouts ? data.Item.workouts : [];
         workouts = workouts.filter(workout => workout.id !== id);
@@ -215,9 +215,9 @@ app.delete('/workouts/:id', (req, res) => {
 })
 
 app.get('/routines', (req, res) => { 
-    let key = getKey(req);
+    let userId = getUserId(req);
 
-    database.get('routines', key)
+    database.getConfig('routines', key)
     .then((data) => {
         let routines = data && data.Item && data.Item.routines ? data.Item.routines : [];
         res.status(200);
@@ -231,10 +231,10 @@ app.get('/routines', (req, res) => {
 
 app.post('/routines', (req, res) => {
     // todo: validate input
-    let key = getKey(req);
+    let userId = getUserId(req);
     let routine = req.body;
 
-    database.get('routines', key)
+    database.getConfig('routines', key)
     .then((data) => {
         let routines = data && data.Item && data.Item.routines ? data.Item.routines : [];
         routines.push(routine);
@@ -255,11 +255,11 @@ app.post('/routines', (req, res) => {
 })
 
 app.put('/routines/:id', (req, res) => {
-    let key = getKey(req);
+    let userId = getUserId(req);
     let id = req.params.id;
     let routine = req.body;
 
-    database.get('routines', key)
+    database.getConfig('routines', key)
     .then((data) => {
         let routines = data && data.Item && data.Item.routines ? data.Item.routines : [];
         let foundRoutine = routines.find(routine => routine.id === id);
@@ -284,10 +284,10 @@ app.put('/routines/:id', (req, res) => {
 })
 
 app.delete('/routines/:id', (req, res) => {
-    let key = getKey(req);
+    let userId = getUserId(req);
     let id = req.params.id;
 
-    database.get('routines', key)
+    database.getConfig('routines', key)
     .then((data) => {
         let routines = data && data.Item && data.Item.routines ? data.Item.routines : [];
         routines = routines.filter(routine => routine.id !== id);
@@ -309,9 +309,9 @@ app.delete('/routines/:id', (req, res) => {
 })
 
 app.get('/exercises', (req, res) => {
-    let key = getKey(req);
+    let userId = getUserId(req);
 
-    database.get('exercises', key)
+    database.getConfig('exercises', key)
     .then((data) => {
         let exercises = data && data.Item && data.Item.exercises ? data.Item.exercises : [];
         res.status(200);
@@ -325,10 +325,10 @@ app.get('/exercises', (req, res) => {
 
 app.post('/exercises', (req, res) => {
     // todo: validate input
-    let key = getKey(req);
+    let userId = getUserId(req);
     let exercise = req.body;
 
-    database.get('exercises', key)
+    database.getConfig('exercises', key)
     .then((data) => {
         let exercises = data && data.Item && data.Item.exercises ? data.Item.exercises : [];
         exercises.push(exercise);
@@ -349,11 +349,11 @@ app.post('/exercises', (req, res) => {
 })
 
 app.put('/exercises/:id', (req, res) => {
-    let key = getKey(req);
+    let userId = getUserId(req);
     let id = req.params.id;
     let exercise = req.body;
 
-    database.get('routines', key)
+    database.getConfig('routines', key)
     .then((data) => {
         let routines = data && data.Item && data.Item.routines ? data.Item.routines : [];
 
@@ -367,7 +367,7 @@ app.put('/exercises/:id', (req, res) => {
         return database.set('routines', key, routines);
     })
     .then(() => {
-        return database.get('exercises', key);
+        return database.getConfig('exercises', key);
     })
     .then((data) => {
         let exercises = data && data.Item && data.Item.exercises ? data.Item.exercises : [];
@@ -393,10 +393,10 @@ app.put('/exercises/:id', (req, res) => {
 })
 
 app.delete('/exercises/:id', (req, res) => {
-    let key = getKey(req);
+    let userId = getUserId(req);
     let id = req.params.id;
 
-    database.get('routines', key)
+    database.getConfig('routines', key)
     .then((data) => {
         let routines = data && data.Item && data.Item.routines ? data.Item.routines : [];
         
@@ -410,7 +410,7 @@ app.delete('/exercises/:id', (req, res) => {
         return database.set('routines', key, routines);
     })
     .then(() => {
-        return database.get('exercises', key);
+        return database.getConfig('exercises', key);
     })
     .then((data) => {
         let exercises = data && data.Item && data.Item.exercises ? data.Item.exercises : [];
