@@ -36,6 +36,14 @@ const workoutSort = (predicate) => {
     }
 }
 
+app.get('/history', (req, res) => {
+    database.scan('jp')
+    .then(data => {
+        res.status(200);
+        res.json(workouts);
+    })
+})
+
 // status - /workouts?status=<undone|done>
 // pagination - /workouts?limit=N&offset=M
 // sort - /workouts?order=<ASC|DESC>

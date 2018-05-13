@@ -1,2 +1,3 @@
 exports.AWS_REGION = "us-east-1";
-exports.DYNAMO_TABLE = "SWoT";
+exports.PRIMARY_TABLE = "SWoT";
+exports.HISTORY_TABLE = "SWoT-History";
