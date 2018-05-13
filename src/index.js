@@ -42,15 +42,35 @@ app.get('/workouts/history', (req, res) => {
     let toTime = req.query && req.query.toTime ? req.query.toTime : new Date().getTime();
     let routineId = req.query && req.query.routineId ? req.query.routineId.toLowerCase() : undefined;
 
-    database.query(userId, fromTime, toTime)
-    .then(data => {
+    let workouts = [];
+
+    let query = (userId, fromTime, toTime, lastEvaluatedKey) => {
+        return new Promise((resolve, reject) => {
+            database.query(userId, fromTime, toTime, lastEvaluatedKey)
+            .then(data => {
+                workouts = workouts.concat(data.Items.map(i => i.workout));
+                
+                if (data.LastEvaluatedKey) {
+                    query(userId, fromTime, toTime, data.LastEvaluatedKey);
+                }
+                
+                resolve(workouts);
+            })
+            .catch((err) => {
+                reject(err);
+            });            
+        })
+    }
+    
+    query(userId, fromTime, toTime)
+    .then(workouts => {
         res.status(200);
-        res.json(data.Items.map(i => i.workout));
+        res.json(workouts);
     })
-    .catch((err) => {
+    .catch(err => {
         res.status(500);
         res.json(err);
-    });
+    })
 })
 
 // status - /workouts?status=<undone|done>
