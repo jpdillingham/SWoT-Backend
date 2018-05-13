@@ -36,12 +36,21 @@ const workoutSort = (predicate) => {
     }
 }
 
-app.get('/history', (req, res) => {
-    database.scan('jp')
+app.get('/workouts/history', (req, res) => {
+    let userId = getUserId(req);
+    let fromTime = req.query && req.query.fromTime ? req.query.fromTime : 0;
+    let toTime = req.query && req.query.toTime ? req.query.toTime : new Date().getTime();
+    let routineId = req.query && req.query.routineId ? req.query.routineId.toLowerCase() : undefined;
+
+    database.query(key, fromTime, toTime)
     .then(data => {
         res.status(200);
-        res.json(workouts);
+        res.json(data.Items);
     })
+    .catch((err) => {
+        res.status(500);
+        res.json(err);
+    });
 })
 
 // status - /workouts?status=<undone|done>
