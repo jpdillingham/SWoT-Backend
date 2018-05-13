@@ -4,11 +4,11 @@ const constants = require('./constants');
 AWS.config.update({ region: constants.AWS_REGION });
 const dynamoDB = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10', convertEmptyValues: true });
 
-exports.get = (property, key) => {
+exports.get = (userId, property) => {
     let params = {
         TableName: constants.PRIMARY_TABLE,
         Key: {
-            user: key,
+            user: userId,
         },
         ProjectionExpression: property,
     };
@@ -16,11 +16,11 @@ exports.get = (property, key) => {
     return dynamoDB.get(params).promise();
 }
 
-exports.set = (property, key, value) => {
+exports.set = (userId, property, value) => {
     let params = {
         TableName: constants.PRIMARY_TABLE,
         Key: { 
-            user: key
+            user: userId
         },
         UpdateExpression: 'SET #property = :value',
         ExpressionAttributeNames: { '#property' : property },
@@ -30,11 +30,28 @@ exports.set = (property, key, value) => {
     return dynamoDB.update(params).promise();  
 }
 
-exports.scan = (key) => {
+exports.query = (userId, fromTime, toTime, exclusiveStartKey) => {
+    fromTime = Number(fromTime);
+    toTime = Number(toTime);
+    
     let params = {
         TableName: constants.HISTORY_TABLE,
-        Limit: 50,
+        KeyConditionExpression: "#user = :user AND endTime BETWEEN :fromTime and :toTime",
+        ExpressionAttributeNames:{
+            "#user": 'user',
+        },
+        ExpressionAttributeValues: {
+            ":user": userId,
+            ":fromTime": fromTime,
+            ":toTime": toTime,
+        }
+    }
+    
+    // if exclusiveStartKey is supplied, append it to the params to get
+    // the next page of results
+    if (exclusiveStartKey) {
+        params.ExclusiveStartKey = exclusiveStartKey;
     }
 
-    return dynamoDB.scan(params).promise();
+    return dynamoDB.query(params).promise();
 }
