@@ -113,7 +113,7 @@ app.get('/workouts/:id', (req,res) => {
     let userId = getUserId(req);
     let id = req.params.id;
 
-    database.get('workouts', key)
+    database.get(userId, 'workouts')
     .then(data => {
         let workouts = data && data.Item && data.Item.workouts ? data.Item.workouts : [];
         let workout = workouts.find(workout => workout.id === id);
@@ -140,7 +140,7 @@ app.post('/workouts', (req, res) => {
     let userId = getUserId(req);
     let workout = req.body;
 
-    database.getConfig('workouts', key)
+    database.get(userId, 'workouts')
     .then((data) => {
         let workouts = data && data.Item && data.Item.workouts ? data.Item.workouts : [];
         workouts.push(workout);
@@ -148,7 +148,7 @@ app.post('/workouts', (req, res) => {
         return workouts;
     })
     .then((workouts) => {
-        return database.set('workouts', key, workouts);
+        return database.set(userId, 'workouts', workouts);
     })
     .then(() => {
         res.status(201);
@@ -165,7 +165,7 @@ app.put('/workouts/:id', (req, res) => {
     let id = req.params.id;
     let workout = req.body;
 
-    database.getConfig('workouts', key)
+    database.get(userId, 'workouts')
     .then((data) => {
         let workouts = data && data.Item && data.Item.workouts ? data.Item.workouts : [];
         let foundworkout = workouts.find(workout => workout.id === id);
@@ -177,7 +177,7 @@ app.put('/workouts/:id', (req, res) => {
         return workouts;
     })
     .then((workouts) => {
-        return database.set('workouts', key, workouts);
+        return database.set(userId, 'workouts', workouts);
     })
     .then(() => {
         res.status(200);
@@ -193,7 +193,7 @@ app.delete('/workouts/:id', (req, res) => {
     let userId = getUserId(req);
     let id = req.params.id;
 
-    database.getConfig('workouts', key)
+    database.get(userId, 'workouts')
     .then((data) => {
         let workouts = data && data.Item && data.Item.workouts ? data.Item.workouts : [];
         workouts = workouts.filter(workout => workout.id !== id);
@@ -202,7 +202,7 @@ app.delete('/workouts/:id', (req, res) => {
         return workouts;
     })
     .then((workouts) => {
-        return database.set('workouts', key, workouts);
+        return database.set(userId, 'workouts', workouts);
     })
     .then(() => {
         res.status(204);
@@ -217,7 +217,7 @@ app.delete('/workouts/:id', (req, res) => {
 app.get('/routines', (req, res) => { 
     let userId = getUserId(req);
 
-    database.getConfig('routines', key)
+    database.get(userId, 'routines')
     .then((data) => {
         let routines = data && data.Item && data.Item.routines ? data.Item.routines : [];
         res.status(200);
@@ -234,7 +234,7 @@ app.post('/routines', (req, res) => {
     let userId = getUserId(req);
     let routine = req.body;
 
-    database.getConfig('routines', key)
+    database.get(userId, 'routines')
     .then((data) => {
         let routines = data && data.Item && data.Item.routines ? data.Item.routines : [];
         routines.push(routine);
@@ -242,7 +242,7 @@ app.post('/routines', (req, res) => {
         return routines;
     })
     .then((routines) => {
-        return database.set('routines', key, routines);
+        return database.set(userId, 'routines', routines);
     })
     .then(() => {
         res.status(201);
@@ -259,7 +259,7 @@ app.put('/routines/:id', (req, res) => {
     let id = req.params.id;
     let routine = req.body;
 
-    database.getConfig('routines', key)
+    database.get(userId, 'routines')
     .then((data) => {
         let routines = data && data.Item && data.Item.routines ? data.Item.routines : [];
         let foundRoutine = routines.find(routine => routine.id === id);
@@ -271,7 +271,7 @@ app.put('/routines/:id', (req, res) => {
         return routines;
     })
     .then((routines) => {
-        return database.set('routines', key, routines);
+        return database.set(userId, 'routines', routines);
     })
     .then(() => {
         res.status(200);
@@ -287,16 +287,14 @@ app.delete('/routines/:id', (req, res) => {
     let userId = getUserId(req);
     let id = req.params.id;
 
-    database.getConfig('routines', key)
+    database.get(userId, 'routines')
     .then((data) => {
         let routines = data && data.Item && data.Item.routines ? data.Item.routines : [];
         routines = routines.filter(routine => routine.id !== id);
-        
-        console.log('updated', routines);
         return routines;
     })
     .then((routines) => {
-        return database.set('routines', key, routines);
+        return database.set(userId, 'routines', routines);
     })
     .then(() => {
         res.status(204);
@@ -311,7 +309,7 @@ app.delete('/routines/:id', (req, res) => {
 app.get('/exercises', (req, res) => {
     let userId = getUserId(req);
 
-    database.getConfig('exercises', key)
+    database.get(userId, 'exercises')
     .then((data) => {
         let exercises = data && data.Item && data.Item.exercises ? data.Item.exercises : [];
         res.status(200);
@@ -328,7 +326,7 @@ app.post('/exercises', (req, res) => {
     let userId = getUserId(req);
     let exercise = req.body;
 
-    database.getConfig('exercises', key)
+    database.get(userId, 'exercises')
     .then((data) => {
         let exercises = data && data.Item && data.Item.exercises ? data.Item.exercises : [];
         exercises.push(exercise);
@@ -336,7 +334,7 @@ app.post('/exercises', (req, res) => {
         return exercises;
     })
     .then((exercises) => {
-        return database.set('exercises', key, exercises);
+        return database.set(userId, 'exercises', exercises);
     })
     .then(() => {
         res.status(201);
@@ -353,7 +351,7 @@ app.put('/exercises/:id', (req, res) => {
     let id = req.params.id;
     let exercise = req.body;
 
-    database.getConfig('routines', key)
+    database.get(userId, 'routines')
     .then((data) => {
         let routines = data && data.Item && data.Item.routines ? data.Item.routines : [];
 
@@ -364,10 +362,10 @@ app.put('/exercises/:id', (req, res) => {
         return routines;
     })
     .then((routines) => {
-        return database.set('routines', key, routines);
+        return database.set(userId, 'routines', routines);
     })
     .then(() => {
-        return database.getConfig('exercises', key);
+        return database.get(userId, 'exercises');
     })
     .then((data) => {
         let exercises = data && data.Item && data.Item.exercises ? data.Item.exercises : [];
@@ -380,7 +378,7 @@ app.put('/exercises/:id', (req, res) => {
         return exercises;
     })
     .then((exercises) => {
-        return database.set('exercises', key, exercises);
+        return database.set(userId, 'exercises', exercises);
     })
     .then(() => {
         res.status(200);
@@ -396,7 +394,7 @@ app.delete('/exercises/:id', (req, res) => {
     let userId = getUserId(req);
     let id = req.params.id;
 
-    database.getConfig('routines', key)
+    database.get(userId, 'routines')
     .then((data) => {
         let routines = data && data.Item && data.Item.routines ? data.Item.routines : [];
         
@@ -407,10 +405,10 @@ app.delete('/exercises/:id', (req, res) => {
         return routines;
     })
     .then((routines) => {
-        return database.set('routines', key, routines);
+        return database.set(userId, 'routines', routines);
     })
     .then(() => {
-        return database.getConfig('exercises', key);
+        return database.get(userId, 'exercises');
     })
     .then((data) => {
         let exercises = data && data.Item && data.Item.exercises ? data.Item.exercises : [];
@@ -419,7 +417,7 @@ app.delete('/exercises/:id', (req, res) => {
         return exercises;
     })
     .then((exercises) => {
-        return database.set('exercises', key, exercises);
+        return database.set(userId, 'exercises', exercises);
     })
     .then((data) => {
         res.status(204);
