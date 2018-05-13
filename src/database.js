@@ -30,7 +30,7 @@ exports.set = (userId, property, value) => {
     return dynamoDB.update(params).promise();  
 }
 
-exports.query = (userId, fromTime, toTime, exclusiveStartKey) => {
+exports.query = (userId, fromTime, toTime, lastEvaluatedKey) => {
     fromTime = Number(fromTime);
     toTime = Number(toTime);
     
@@ -47,10 +47,10 @@ exports.query = (userId, fromTime, toTime, exclusiveStartKey) => {
         }
     }
     
-    // if exclusiveStartKey is supplied, append it to the params to get
+    // if lastEvaluatedKey is supplied, append it to the params to get
     // the next page of results
-    if (exclusiveStartKey) {
-        params.ExclusiveStartKey = exclusiveStartKey;
+    if (lastEvaluatedKey) {
+        params.ExclusiveStartKey = lastEvaluatedKey;
     }
 
     return dynamoDB.query(params).promise();
