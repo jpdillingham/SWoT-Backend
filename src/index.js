@@ -36,11 +36,18 @@ const workoutSort = (predicate) => {
     }
 }
 
+// pagination - /workouts?limit=N&offset=M
+// sort - /workouts?order=<ASC|DESC>
+// filter by routine - /workouts?routineId=guid
+// filter by date range = /workouts?fromDate=<unix timestamp>&toDate=<unix timestamp>
 app.get('/workouts/history', (req, res) => {
     let userId = getUserId(req);
+    let order = req.query && req.query.order ? req.query.order.toLowerCase() : undefined;
+    let routineId = req.query && req.query.routineId ? req.query.routineId.toLowerCase() : undefined;
+    let limit = req.query && req.query.limit ? req.query.limit : 30;
+    let offset = req.query && req.query.offset ? req.query.offset : 0;
     let fromTime = req.query && req.query.fromTime ? req.query.fromTime : 0;
     let toTime = req.query && req.query.toTime ? req.query.toTime : new Date().getTime();
-    let routineId = req.query && req.query.routineId ? req.query.routineId.toLowerCase() : undefined;
 
     let workouts = [];
 
@@ -48,7 +55,8 @@ app.get('/workouts/history', (req, res) => {
         return new Promise((resolve, reject) => {
             database.query(userId, fromTime, toTime, lastEvaluatedKey)
             .then(data => {
-                workouts = workouts.concat(data.Items.map(i => i.workout));
+                let items = data && data.Items ? data.Items : [];
+                workouts = workouts.concat(items.map(i => i.workout));
                 
                 if (data.LastEvaluatedKey) {
                     query(userId, fromTime, toTime, data.LastEvaluatedKey);
@@ -64,49 +72,8 @@ app.get('/workouts/history', (req, res) => {
     
     query(userId, fromTime, toTime)
     .then(workouts => {
-        res.status(200);
-        res.json(workouts);
-    })
-    .catch(err => {
-        res.status(500);
-        res.json(err);
-    })
-})
-
-// status - /workouts?status=<undone|done>
-// pagination - /workouts?limit=N&offset=M
-// sort - /workouts?order=<ASC|DESC>
-// filter by routine - /workouts?routineId=guid
-// filter by date range = /workouts?fromDate=<unix timestamp>&toDate=<unix timestamp>
-app.get('/workouts', (req, res) => { 
-    let userId = getUserId(req);
-    let status = req.query && req.query.status ? req.query.status.toLowerCase() : undefined;
-    let order = req.query && req.query.order ? req.query.order.toLowerCase() : undefined;
-    let routineId = req.query && req.query.routineId ? req.query.routineId.toLowerCase() : undefined;
-    let limit = req.query && req.query.limit ? req.query.limit : 30;
-    let offset = req.query && req.query.offset ? req.query.offset : 0;
-    let fromDate = req.query && req.query.fromDate ? req.query.fromDate : undefined;
-    let toDate = req.query && req.query.toDate ? req.query.toDate : undefined;
-
-    database.get(userId, 'workouts')
-    .then((data) => {
-        let workouts = data && data.Item && data.Item.workouts ? data.Item.workouts : [];
-
-        if (status) {
-            if (status === 'done') {
-                workouts = workouts.filter(workout => workout.endTime !== undefined)
-            } 
-            else if (status === 'undone') {
-                workouts = workouts.filter(workout => workout.endTime === undefined)
-            }
-            else {
-                res.status(400);
-                res.status('Invalid status predicate \'' + status + '\'; specify undone or done')
-            }
-        }
-
-        if (fromDate && toDate) {
-            workouts = workouts.filter(w => w.endTime >= fromDate && w.endTime <= toDate);
+        if (fromTime && toTime) {
+            workouts = workouts.filter(w => w.endTime >= fromTime && w.endTime <= toTime);
         }
         
         if (routineId) {
@@ -128,6 +95,22 @@ app.get('/workouts', (req, res) => {
         if (offset && limit) {
             workouts = workouts.slice(+offset, +offset + +limit);
         }
+
+        res.status(200);
+        res.json(workouts);
+    })
+    .catch(err => {
+        res.status(500);
+        res.json(err);
+    })
+})
+
+app.get('/workouts', (req, res) => { 
+    let userId = getUserId(req);
+
+    database.get(userId, 'workouts')
+    .then((data) => {
+        let workouts = data && data.Item && data.Item.workouts ? data.Item.workouts : [];
 
         res.status(200);
         res.json(workouts);
