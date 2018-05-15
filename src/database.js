@@ -30,6 +30,19 @@ exports.set = (userId, property, value) => {
     return dynamoDB.update(params).promise();  
 }
 
+exports.put = (userId, workout) => {
+    let params = {
+        TableName: constants.HISTORY_TABLE,
+        Item: {
+            user: userId,
+            endTime: workout.endTime,
+            workout: workout,
+        }
+    }
+    
+    return dynamoDB.put(params).promise();
+}
+
 exports.query = (userId, fromTime, toTime, lastEvaluatedKey) => {
     fromTime = Number(fromTime);
     toTime = Number(toTime);
