@@ -180,9 +180,9 @@ app.put('/workouts/:id', (req, res) => {
     database.get(userId, 'workouts')
     .then((data) => {
         let workouts = data && data.Item && data.Item.workouts ? data.Item.workouts : [];
-        let foundworkout = workouts.find(workout => workout.id === id);
         
         if (!workout.endTime) { // not finished, update it
+            let foundworkout = workouts.find(workout => workout.id === id);
             let index = workouts.indexOf(foundworkout);
             workouts[index] = workout;            
         }
@@ -198,7 +198,8 @@ app.put('/workouts/:id', (req, res) => {
         }
         else {
             return Promise.all([
-                database.set(userId, 'workouts', workouts)
+                database.set(userId, 'workouts', workouts),
+                database.put(userId, workout)
             ]).then(() => { return workouts });
         }
     })
