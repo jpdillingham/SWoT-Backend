@@ -181,15 +181,27 @@ app.put('/workouts/:id', (req, res) => {
     .then((data) => {
         let workouts = data && data.Item && data.Item.workouts ? data.Item.workouts : [];
         let foundworkout = workouts.find(workout => workout.id === id);
-
-        let index = workouts.indexOf(foundworkout);
-
-        workouts[index] = workout;
         
-        return workouts;
+        if (!workout.endTime) { // not finished, update it
+            let index = workouts.indexOf(foundworkout);
+            workouts[index] = workout;            
+        }
+        else { // workout complete, remove from workouts table and insert history
+            workouts = workouts.filter(workout => workout.id !== id);
+        }
+        
+        return [ workout, workouts ];
     })
-    .then((workouts) => {
-        return database.set(userId, 'workouts', workouts);
+    .then(([ workout, workouts ]) => {
+        if (!workout.endTime) {
+            return database.set(userId, 'workouts', workouts);
+        }
+        else {
+            return Promise.all([
+                database.set(userId, 'workouts', workouts),
+                
+            ]);
+        }
     })
     .then(() => {
         res.status(200);
