@@ -194,18 +194,17 @@ app.put('/workouts/:id', (req, res) => {
     })
     .then(([ workout, workouts ]) => {
         if (!workout.endTime) {
-            return database.set(userId, 'workouts', workouts);
+            return database.set(userId, 'workouts', workouts).then(() => { return workouts });
         }
         else {
             return Promise.all([
-                database.set(userId, 'workouts', workouts),
-                
-            ]);
+                database.set(userId, 'workouts', workouts)
+            ]).then(() => { return workouts });
         }
     })
-    .then(() => {
+    .then((workouts) => {
         res.status(200);
-        res.json(workout);
+        res.json(workouts);
     })
     .catch((err) => {
         res.status(500);
