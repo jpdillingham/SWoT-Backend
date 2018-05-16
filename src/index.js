@@ -40,7 +40,7 @@ const workoutSort = (predicate) => {
 // sort - /workouts?order=<ASC|DESC>
 // filter by routine - /workouts?routineId=guid
 // filter by date range = /workouts?fromDate=<unix timestamp>&toDate=<unix timestamp>
-app.get('/workouts/history', (req, res) => {
+app.get(['/routines/history', '/workouts/history'], (req, res) => {
     let userId = getUserId(req);
     let order = req.query && req.query.order ? req.query.order.toLowerCase() : undefined;
     let routineId = req.query && req.query.routineId ? req.query.routineId.toLowerCase() : undefined;
