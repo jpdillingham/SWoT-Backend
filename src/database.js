@@ -68,3 +68,26 @@ exports.query = (userId, fromTime, toTime, lastEvaluatedKey) => {
 
     return dynamoDB.query(params).promise();
 }
+
+exports.queryAll = (userId, fromTime, toTime, workouts, lastEvaluatedKey) => {
+    workouts = workouts || [];
+
+    return new Promise((resolve, reject) => {
+        this.query(userId, fromTime, toTime, lastEvaluatedKey)
+        .then(data => {
+            let items = data && data.Items ? data.Items : [];
+            workouts = workouts.concat(items.map(i => i.workout));
+            
+            if (data.LastEvaluatedKey) {
+                this.queryAll(userId, fromTime, toTime, workouts, data.LastEvaluatedKey)
+                .then(workouts => resolve(workouts));
+            }
+            else {
+                resolve(workouts);
+            }
+        })
+        .catch((err) => {
+            reject(err);
+        });            
+    })
+}
