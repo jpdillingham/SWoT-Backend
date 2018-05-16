@@ -180,20 +180,32 @@ app.put('/workouts/:id', (req, res) => {
     database.get(userId, 'workouts')
     .then((data) => {
         let workouts = data && data.Item && data.Item.workouts ? data.Item.workouts : [];
-        let foundworkout = workouts.find(workout => workout.id === id);
-
-        let index = workouts.indexOf(foundworkout);
-
-        workouts[index] = workout;
         
-        return workouts;
+        if (!workout.endTime) { // not finished, update it
+            let foundworkout = workouts.find(workout => workout.id === id);
+            let index = workouts.indexOf(foundworkout);
+            workouts[index] = workout;            
+        }
+        else { // workout complete, remove from workouts table and insert history
+            workouts = workouts.filter(workout => workout.id !== id);
+        }
+        
+        return [ workout, workouts ];
+    })
+    .then(([ workout, workouts ]) => {
+        if (!workout.endTime) {
+            return database.set(userId, 'workouts', workouts).then(() => { return workouts });
+        }
+        else {
+            return Promise.all([
+                database.set(userId, 'workouts', workouts),
+                database.put(userId, workout)
+            ]).then(() => { return workouts });
+        }
     })
     .then((workouts) => {
-        return database.set(userId, 'workouts', workouts);
-    })
-    .then(() => {
         res.status(200);
-        res.json(workout);
+        res.json(workouts);
     })
     .catch((err) => {
         res.status(500);
