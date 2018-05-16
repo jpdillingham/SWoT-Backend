@@ -49,28 +49,7 @@ app.get(['/routines/history', '/workouts/history'], (req, res) => {
     let fromTime = req.query && req.query.fromTime ? req.query.fromTime : 0;
     let toTime = req.query && req.query.toTime ? req.query.toTime : new Date().getTime();
 
-    let workouts = [];
-
-    let query = (userId, fromTime, toTime, lastEvaluatedKey) => {
-        return new Promise((resolve, reject) => {
-            database.query(userId, fromTime, toTime, lastEvaluatedKey)
-            .then(data => {
-                let items = data && data.Items ? data.Items : [];
-                workouts = workouts.concat(items.map(i => i.workout));
-                
-                if (data.LastEvaluatedKey) {
-                    query(userId, fromTime, toTime, data.LastEvaluatedKey);
-                }
-                
-                resolve(workouts);
-            })
-            .catch((err) => {
-                reject(err);
-            });            
-        })
-    }
-    
-    query(userId, fromTime, toTime)
+    database.queryAll(userId, fromTime, toTime)
     .then(workouts => {
         if (fromTime && toTime) {
             workouts = workouts.filter(w => w.endTime >= fromTime && w.endTime <= toTime);
