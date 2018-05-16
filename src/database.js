@@ -70,6 +70,8 @@ exports.query = (userId, fromTime, toTime, lastEvaluatedKey) => {
 }
 
 exports.queryAll = (userId, fromTime, toTime, workouts, lastEvaluatedKey) => {
+    fromTime = Number(fromTime || 0);
+    toTime = Number(toTime || new Date().getTime());
     workouts = workouts || [];
 
     return new Promise((resolve, reject) => {
