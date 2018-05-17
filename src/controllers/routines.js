@@ -19,6 +19,8 @@ router.get('/', (req, res) => {
     });
 });
 
+router.get('/history', (req, res) => { res.redirect('../workouts/history') });
+
 router.post('/', (req, res) => {
     // todo: validate input
     let userId = util.getUserId(req);
