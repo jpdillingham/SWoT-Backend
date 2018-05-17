@@ -26,7 +26,7 @@ const workoutSort = (predicate) => {
 // sort - /workouts?order=<ASC|DESC>
 // filter by routine - /workouts?routineId=guid
 // filter by date range = /workouts?fromDate=<unix timestamp>&toDate=<unix timestamp>
-router.get(['/routines/history', '/workouts/history'], (req, res) => {
+router.get('/history', (req, res) => {
     let userId = util.getUserId(req);
     let order = req.query && req.query.order ? req.query.order.toLowerCase() : undefined;
     let routineId = req.query && req.query.routineId ? req.query.routineId.toLowerCase() : undefined;
@@ -70,7 +70,7 @@ router.get(['/routines/history', '/workouts/history'], (req, res) => {
     })
 })
 
-router.get('/workouts', (req, res) => { 
+router.get('/', (req, res) => { 
     let userId = util.getUserId(req);
 
     database.get(userId, 'workouts')
@@ -86,7 +86,7 @@ router.get('/workouts', (req, res) => {
     });
 });
 
-router.get('/workouts/:id', (req,res) => {
+router.get('/:id', (req,res) => {
     let userId = util.getUserId(req);
     let id = req.params.id;
 
@@ -110,7 +110,7 @@ router.get('/workouts/:id', (req,res) => {
     })
 })
 
-router.post('/workouts', (req, res) => {
+router.post('/', (req, res) => {
     // todo: validate input
     // todo: coalesce startTime with current time if undefined
     // todo: ensure endTime undefined
@@ -137,7 +137,7 @@ router.post('/workouts', (req, res) => {
     });
 })
 
-router.put('/workouts/:id', (req, res) => {
+router.put('/:id', (req, res) => {
     let userId = util.getUserId(req);
     let id = req.params.id;
     let workout = req.body;
@@ -178,7 +178,7 @@ router.put('/workouts/:id', (req, res) => {
     });
 })
 
-router.delete('/workouts/:id', (req, res) => {
+router.delete('/:id', (req, res) => {
     let userId = util.getUserId(req);
     let id = req.params.id;
 
