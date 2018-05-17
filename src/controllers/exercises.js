@@ -21,7 +21,7 @@ router.get('/history', (req, res) => {
     .then(workouts => {
         let exercises = workouts
                         .map(w => w.routine.exercises)
-                        .reduce((acc, e) => acc.concat(e, []))
+                        .reduce((acc, e) => acc.concat(e))
 
         if (exerciseId) {
             exercises = exercises.filter(e => e.id === exerciseId);
@@ -30,7 +30,13 @@ router.get('/history', (req, res) => {
         res.header('X-Total-Count', exercises.length);
 
         if (order) {
-            // TODO: sort
+            if (order === 'asc' || order === 'desc') {
+                exercises = exercises.sort(util.sortByEndTime(order))
+            }
+            else {
+                res.status(400);
+                res.json('Invalid order predicate \'' + order + '\'; specify ASC or DESC')
+            }
         }
 
         if (offset && limit) {
