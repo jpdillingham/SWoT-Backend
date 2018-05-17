@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const util = require('./util')
 
 const exercises = require('./controllers/exercises')
+const routines = require('./controllers/routines')
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/exercises', exercises);
+app.use('/routines', routines);
 
 var database = require('./database')
 
@@ -207,98 +209,6 @@ app.delete('/workouts/:id', (req, res) => {
     })
     .then((workouts) => {
         return database.set(userId, 'workouts', workouts);
-    })
-    .then(() => {
-        res.status(204);
-        res.json();
-    })
-    .catch((err) => {
-        res.status(500);
-        res.json(err);
-    });
-})
-
-app.get('/routines', (req, res) => { 
-    let userId = getUserId(req);
-
-    database.get(userId, 'routines')
-    .then((data) => {
-        let routines = data && data.Item && data.Item.routines ? data.Item.routines : [];
-        res.status(200);
-        res.json(routines);
-    })
-    .catch((err) => {
-        res.status(500);
-        res.json(err);
-    });
-});
-
-app.post('/routines', (req, res) => {
-    // todo: validate input
-    let userId = getUserId(req);
-    let routine = req.body;
-
-    database.get(userId, 'routines')
-    .then((data) => {
-        let routines = data && data.Item && data.Item.routines ? data.Item.routines : [];
-        routines.push(routine);
-        
-        return routines;
-    })
-    .then((routines) => {
-        return database.set(userId, 'routines', routines);
-    })
-    .then(() => {
-        res.status(201);
-        res.json(routine);
-    })
-    .catch((err) => {
-        res.status(500);
-        res.json(err);
-    });
-})
-
-app.put('/routines/:id', (req, res) => {
-    let userId = getUserId(req);
-    let id = req.params.id;
-    let routine = req.body;
-
-    database.get(userId, 'routines')
-    .then((data) => {
-        let routines = data && data.Item && data.Item.routines ? data.Item.routines : [];
-        let foundRoutine = routines.find(routine => routine.id === id);
-
-        let index = routines.indexOf(foundRoutine);
-
-        routines[index] = routine;
-        
-        return routines;
-    })
-    .then((routines) => {
-        return database.set(userId, 'routines', routines);
-    })
-    .then(() => {
-        res.status(200);
-        res.json(routine);
-    })
-    .catch((err) => {
-        res.status(500);
-        res.json(err);
-    });
-})
-
-app.delete('/routines/:id', (req, res) => {
-    let userId = getUserId(req);
-    let id = req.params.id;
-
-    database.get(userId, 'routines')
-    .then((data) => {
-        let routines = data && data.Item && data.Item.routines ? data.Item.routines : [];
-        routines = routines.filter(routine => routine.id !== id);
-        return routines;
-    })
-    .then((routines) => {
-        return database.set(userId, 'routines', routines);
     })
     .then(() => {
         res.status(204);
