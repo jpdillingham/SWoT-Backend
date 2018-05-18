@@ -5,6 +5,7 @@ const awsServerlessExpressMiddleware = require('aws-serverless-express/middlewar
 const express = require('express');  
 const cors = require('cors');
 const bodyParser = require('body-parser'); 
+
 const util = require('./util')
 
 const exercises = require('./controllers/exercises')

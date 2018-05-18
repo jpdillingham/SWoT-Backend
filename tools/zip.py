@@ -18,6 +18,8 @@ if __name__ == '__main__':
         if os.path.exists(outputFile):
             print('output file exists.  deleting \'' + outputFile + '\'')
             os.remove(outputFile)
+        
+        os.makedirs(os.path.dirname(outputFile))
 
         print ('creating zip in \'' + tempDir + '\'...')
         shutil.make_archive(tempFile, 'zip', srcDir)
